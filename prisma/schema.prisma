@@ -29,8 +29,9 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
-  role String? @default("user")
+  role   String? @default("user")
   status String? @default("active")
+  meals  Meal[]
 
   @@unique([email])
   @@map("user")
@@ -82,4 +83,17 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+model Meal {
+  id                 Int    @id @default(autoincrement())
+  name               String
+  description        String
+  cuisine_type       String
+  dietry_type        String
+  availabilty_status String
+  price              Int
+
+  provider_id         String
+  provider    User   @relation(fields: [provider_id], references: [id],onDelete: Cascade)
 }
