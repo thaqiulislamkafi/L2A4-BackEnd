@@ -16,6 +16,19 @@ datasource db {
 model Categories {
   id            Int    @id @default(autoincrement())
   category_name String
+  meals         Meal[]
+}
+
+model Cuisinetype {
+  id                Int    @id @default(autoincrement())
+  cuisine_type_name String
+  meals             Meal[]
+}
+
+model Dietrytype {
+  id               Int    @id @default(autoincrement())
+  dietry_type_name String
+  meals            Meal[]
 }
 
 model User {
@@ -86,14 +99,21 @@ model Verification {
 }
 
 model Meal {
+
   id                 Int    @id @default(autoincrement())
   name               String
   description        String
-  cuisine_type       String
-  dietry_type        String
+  cuisine_type       Int
+  dietry_type        Int
+  category           Int
   availabilty_status String
   price              Int
 
-  provider_id         String
-  provider    User   @relation(fields: [provider_id], references: [id],onDelete: Cascade)
+  provider_id String
+  provider    User   @relation(fields: [provider_id], references: [id], onDelete: Cascade)
+
+  category_rel Categories  @relation(fields: [category], references: [id])
+  cuisine_rel  Cuisinetype @relation(fields: [cuisine_type], references: [id])
+  dietry_rel   Dietrytype  @relation(fields: [dietry_type], references: [id])
+  
 }
