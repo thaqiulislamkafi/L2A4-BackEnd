@@ -15,6 +15,8 @@ const PORT = process.env.PORT || 5000 ;
 app.all("/api/auth/*splat", toNodeHandler(auth));
 
 app.use('/api/cuisine-types',CuisineTypeRoute) ;
+app.use('/api/categories,',CuisineTypeRoute) ;
+
 app.use(NotFound) ;
 app.use(GlobalHandleError);
 
