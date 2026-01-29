@@ -1,9 +1,9 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { CuisineTypeService } from "./cuisineTypes.service";
 
 export const CuisineTypeController = {
 
-    async getCuisineTypes(req:Request, res:Response) {
+    async getCuisineTypes(req:Request, res:Response,next:NextFunction) {
 
         try {
             
@@ -15,13 +15,12 @@ export const CuisineTypeController = {
             });
 
         } catch (error) {
-            console.error(error);
-            res.status(500).send({message : "Internal Server Error"})
+            next(error);
         }
 
     },
 
-    async getCuisineTypeById(req:Request, res:Response) {
+    async getCuisineTypeById(req:Request, res:Response,next:NextFunction) {
 
         try {
             const id = Number(req.params.id);
@@ -32,12 +31,12 @@ export const CuisineTypeController = {
                 data : cuisineType
             });
         } catch (error) {
-            console.error(error);
-            res.status(500).send({message : "Internal Server Error"})
+            next(error);
+
         }
     },
 
-    async addCuisineType(req:Request, res:Response) {
+    async addCuisineType(req:Request, res:Response,next:NextFunction) {
 
         try {
             const { name } = req.body;
@@ -48,13 +47,12 @@ export const CuisineTypeController = {
                 data : cuisineType
             });
         } catch (error) {
-            console.error(error);
-            res.status(500).send({message : "Internal Server Error"})
+            next(error);
         }
     },
 
 
-    async updateCuisineType(req:Request, res:Response) {
+    async updateCuisineType(req:Request, res:Response,next:NextFunction) {
 
         try {
             const id = Number(req.params.id);
@@ -66,12 +64,11 @@ export const CuisineTypeController = {
                 data : updatedCuisineType
             });
         } catch (error) {
-            console.error(error);
-            res.status(500).send({message : "Internal Server Error"})
+            next(error);
         }
     },
 
-    async deleteCuisineType(req:Request, res:Response) {
+    async deleteCuisineType(req:Request, res:Response,next:NextFunction) {
 
         try {
             const id = Number(req.params.id);
@@ -82,8 +79,7 @@ export const CuisineTypeController = {
                 data : deletedCuisineType
             });
         } catch (error) {
-            console.error(error);
-            res.status(500).send({message : "Internal Server Error"})
+            next(error);
         }
     },
 }

@@ -42,9 +42,10 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
-  role   String? @default("user")
-  status String? @default("active")
-  meals  Meal[]
+  role    String?  @default("user")
+  status  String?  @default("active")
+  meals   Meal[]
+  reviews Review[]
 
   @@unique([email])
   @@map("user")
@@ -99,7 +100,6 @@ model Verification {
 }
 
 model Meal {
-
   id                 Int    @id @default(autoincrement())
   name               String
   description        String
@@ -115,5 +115,18 @@ model Meal {
   category_rel Categories  @relation(fields: [category], references: [id])
   cuisine_rel  Cuisinetype @relation(fields: [cuisine_type], references: [id])
   dietry_rel   Dietrytype  @relation(fields: [dietry_type], references: [id])
-  
+
+  reviews Review[]
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  meal_id   Int
+  user_id   String
+  rating    Int
+  comment   String
+  createdAt DateTime @default(now())
+
+  meal Meal @relation(fields: [meal_id], references: [id], onDelete: Cascade)
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }

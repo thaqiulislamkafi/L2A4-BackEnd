@@ -1,10 +1,10 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { DietryTypesService } from "./dietryTypes.service";
 
 
 export const DietryTypesController = {
 
-    async getDietryTypes(req:Request, res:Response) {
+    async getDietryTypes(req:Request, res:Response,next:NextFunction) {
 
         try {
             
@@ -16,12 +16,11 @@ export const DietryTypesController = {
             });
 
         } catch (error) {
-            console.error(error);
-            res.status(500).send({message : "Internal Server Error"})
+            next(error);
         }
     },
 
-    async getDietryTypeById(req:Request, res:Response) {
+    async getDietryTypeById(req:Request, res:Response,next:NextFunction) {
 
         try {
             const id = Number(req.params.id);
@@ -32,12 +31,11 @@ export const DietryTypesController = {
                 data : dietryType
             });
         } catch (error) {
-            console.error(error);
-            res.status(500).send({message : "Internal Server Error"})
+            next(error);
         }
     },
 
-    async addDietryType(req:Request, res:Response) {
+    async addDietryType(req:Request, res:Response,next:NextFunction) {
 
         try {
             const { name } = req.body;
@@ -48,12 +46,11 @@ export const DietryTypesController = {
                 data : dietryType
             });
         } catch (error) {
-            console.error(error);
-            res.status(500).send({message : "Internal Server Error"})
+            next(error);
         }
     },
 
-    async updateDietryType(req:Request, res:Response) {
+    async updateDietryType(req:Request, res:Response,next:NextFunction) {
 
         try {
             const id = Number(req.params.id);
@@ -65,12 +62,11 @@ export const DietryTypesController = {
                 data : dietryType
             });
         } catch (error) {
-            console.error(error);
-            res.status(500).send({message : "Internal Server Error"})
+           next(error);
         }
     },
 
-    async deleteDietryType(req:Request, res:Response) {
+    async deleteDietryType(req:Request, res:Response,next:NextFunction) {
 
         try {
             const id = Number(req.params.id);
@@ -81,8 +77,7 @@ export const DietryTypesController = {
                 data : dietryType
             });
         } catch (error) {
-            console.error(error);
-            res.status(500).send({message : "Internal Server Error"})
+            next(error);
         }
     },
 }

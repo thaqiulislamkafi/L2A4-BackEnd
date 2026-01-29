@@ -1,9 +1,9 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { MealService } from "./meals.service";
 
 export const MealController = {
 
-    async getMeals(req:Request,res:Response){
+    async getMeals(req:Request,res:Response,next:NextFunction) {
 
         try {
             
@@ -15,12 +15,11 @@ export const MealController = {
             });
 
         } catch (error) {
-            console.error(error);
-            res.status(500).send({message : "Internal Server Error"})
+            next(error);
         }
     },
 
-    async getMealById(req:Request,res:Response){
+    async getMealById(req:Request,res:Response,next:NextFunction){
 
         try {
             const id = Number(req.params.id);
@@ -31,12 +30,11 @@ export const MealController = {
                 data : meal
             });
         } catch (error) {
-            console.error(error);
-            res.status(500).send({message : "Internal Server Error"})
+            next(error) ;
         }
     },
 
-    async addMeal(req:Request,res:Response){
+    async addMeal(req:Request,res:Response,next:NextFunction){
 
         try {
             const mealData = req.body;
@@ -47,12 +45,11 @@ export const MealController = {
                 data : meal
             });
         } catch (error) {
-            console.error(error);
-            res.status(500).send({message : "Internal Server Error"})
+            next(error);
         }
     },
 
-    async updateMeal(req:Request,res:Response){
+    async updateMeal(req:Request,res:Response,next:NextFunction){
 
         try {
             const id = Number(req.params.id);
@@ -64,12 +61,11 @@ export const MealController = {
                 data : updatedMeal
             });
         } catch (error) {
-            console.error(error);
-            res.status(500).send({message : "Internal Server Error"})
+            next(error);
         }
     },
 
-    async deleteMeal(req:Request,res:Response){
+    async deleteMeal(req:Request,res:Response,next:NextFunction){
 
         try {
             const id = Number(req.params.id);
@@ -80,8 +76,7 @@ export const MealController = {
                 data : deletedMeal
             });
         } catch (error) {
-            console.error(error);
-            res.status(500).send({message : "Internal Server Error"})
+            next(error);
         }
     }
 }
