@@ -4,6 +4,7 @@ import { toNodeHandler } from "better-auth/node";
 import { auth } from "../lib/auth";
 import { NotFound } from "./middlewares/notFound";
 import { GlobalHandleError } from "./middlewares/globalHandleError";
+import { CuisineTypeRoute } from "./modules/cuisineTypes/cuisineType.route";
 
 const app = express() ;
 app.use(cors()) ;
@@ -13,7 +14,7 @@ const PORT = process.env.PORT || 5000 ;
 
 app.all("/api/auth/*splat", toNodeHandler(auth));
 
-
+app.use('/api/cuisine-types',CuisineTypeRoute) ;
 app.use(NotFound) ;
 app.use(GlobalHandleError);
 

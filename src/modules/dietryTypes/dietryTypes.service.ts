@@ -14,11 +14,9 @@ export const DietryTypesService = {
         return dietryType;
     },
 
-    async addDietryType(name: string) {
+    async addDietryType(name: { dietry_type_name: string }) {
         const newDietryType = await prisma.dietrytype.create({
-            data: { 
-                dietry_type_name : name
-             },
+            data: name
         });
         return newDietryType;
     },
@@ -26,9 +24,7 @@ export const DietryTypesService = {
     async updateDietryType(id: number, name: string) {
         const updatedDietryType = await prisma.dietrytype.update({
             where: { id },
-            data: { 
-                dietry_type_name : name
-             },
+            data: name
         });
         return updatedDietryType;
     },

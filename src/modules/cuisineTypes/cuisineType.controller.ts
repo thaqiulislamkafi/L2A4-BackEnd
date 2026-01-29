@@ -39,7 +39,7 @@ export const CuisineTypeController = {
     async addCuisineType(req:Request, res:Response,next:NextFunction) {
 
         try {
-            const { name } = req.body;
+            const  name  = req.body;
             const cuisineType = await CuisineTypeService.addCuisineType(name);
             res.status(201).send({
                 success : true,
@@ -56,7 +56,7 @@ export const CuisineTypeController = {
 
         try {
             const id = Number(req.params.id);
-            const { name } = req.body;
+            const  name = req.body;
             const updatedCuisineType = await CuisineTypeService.updateCuisineType(id, name);
             res.status(200).send({
                 success : true,

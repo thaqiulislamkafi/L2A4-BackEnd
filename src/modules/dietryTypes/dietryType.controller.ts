@@ -38,7 +38,7 @@ export const DietryTypesController = {
     async addDietryType(req:Request, res:Response,next:NextFunction) {
 
         try {
-            const { name } = req.body;
+            const  name  = req.body;
             const dietryType = await DietryTypesService.addDietryType(name);
             res.status(201).send({
                 success : true,
@@ -54,7 +54,7 @@ export const DietryTypesController = {
 
         try {
             const id = Number(req.params.id);
-            const { name } = req.body;
+            const  name  = req.body;
             const dietryType = await DietryTypesService.updateDietryType(id, name);
             res.status(200).send({
                 success : true,

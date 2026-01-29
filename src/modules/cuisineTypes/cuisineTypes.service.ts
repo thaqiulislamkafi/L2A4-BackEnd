@@ -14,21 +14,19 @@ export const CuisineTypeService = {
         return cuisineType
     },
 
-    async addCuisineType(name: string) {
+    async addCuisineType(name: { cuisine_type_name: string }) {
         const newCuisineType = await prisma.cuisinetype.create({
-            data: { 
-                cuisine_type_name : name
-             },
+            data: name
         })
         return newCuisineType
     },
 
     async updateCuisineType(id: number, name: string) {
+        console.log(name);
+
         const updatedCuisineType = await prisma.cuisinetype.update({
             where: { id },
-            data: { 
-                cuisine_type_name : name
-             },
+            data : name
         })
         return updatedCuisineType
     },

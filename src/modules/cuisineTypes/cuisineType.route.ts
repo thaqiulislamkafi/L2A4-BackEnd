@@ -4,8 +4,8 @@ import { CuisineTypeController } from "./cuisineType.controller";
 
 export const CuisineTypeRoute = Router();
 
-CuisineTypeRoute.get('/api/cuisine-types',CuisineTypeController.getCuisineTypes) ;
-CuisineTypeRoute.get('/api/cuisine-types/:id',CuisineTypeController.getCuisineTypeById) ;
-CuisineTypeRoute.post('/api/cuisine-types',CuisineTypeController.addCuisineType) ;
-CuisineTypeRoute.put('/api/cuisine-types/:id',CuisineTypeController.updateCuisineType) ;
-CuisineTypeRoute.delete('/api/cuisine-types/:id',CuisineTypeController.deleteCuisineType) ;
+CuisineTypeRoute.get('/',CuisineTypeController.getCuisineTypes) ;
+CuisineTypeRoute.get('/:id',CuisineTypeController.getCuisineTypeById) ;
+CuisineTypeRoute.post('/',CuisineTypeController.addCuisineType) ;
+CuisineTypeRoute.put('/:id',CuisineTypeController.updateCuisineType) ;
+CuisineTypeRoute.delete('/:id',CuisineTypeController.deleteCuisineType) ;
