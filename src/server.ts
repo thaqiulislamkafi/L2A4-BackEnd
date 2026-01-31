@@ -5,6 +5,8 @@ import { auth } from "../lib/auth";
 import { NotFound } from "./middlewares/notFound";
 import { GlobalHandleError } from "./middlewares/globalHandleError";
 import { CuisineTypeRoute } from "./modules/cuisineTypes/cuisineType.route";
+import { CategoriesRoute } from "./modules/categories/categories.route";
+import { DietryTypeRoute } from "./modules/dietryTypes/dietryType.route";
 
 const app = express() ;
 app.use(cors()) ;
@@ -15,7 +17,10 @@ const PORT = process.env.PORT || 5000 ;
 app.all("/api/auth/*splat", toNodeHandler(auth));
 
 app.use('/api/cuisine-types',CuisineTypeRoute) ;
-app.use('/api/categories,',CuisineTypeRoute) ;
+app.use('/api/categories',CategoriesRoute) ;
+app.use('/api/dietry-types',DietryTypeRoute) ;
+
+
 
 app.use(NotFound) ;
 app.use(GlobalHandleError);
