@@ -3,12 +3,17 @@ import { CartItemService } from "./cartItem.service";
 
 export const CartItemController = {
 
-    async getCartItemById(req:Request, res:Response,next:NextFunction) {
+    async getCartItemByUserId(req:Request, res:Response,next:NextFunction) {
 
         try {
-            const id = Number(req.params.id);
-            const cartItem = await CartItemService.getCartItemById(id);
-            res.json(cartItem);
+            const userId:string = String(req.params.id);
+            const cartItem = await CartItemService.getCartItemByUserId(userId);
+
+            res.status(200).send({
+                success : true,
+                message : "Cart item fetched successfully",
+                data : cartItem
+            });
         } catch (error) {
             next(error);
         }
@@ -18,9 +23,13 @@ export const CartItemController = {
 
         try {
             const data = req.body;
-            const userId = req.headers['user-id'] as string;
+            const userId = req.query.userId as string;
             const cartItem = await CartItemService.addCartItem(data,userId);
-            res.json(cartItem);
+            res.status(201).send({
+                success : true,
+                message : "Cart item added successfully",
+                data : cartItem
+                });
         } catch (error) {
             next(error);
         }
@@ -31,7 +40,11 @@ export const CartItemController = {
         try {
             const id = Number(req.params.id);
             const cartItem = await CartItemService.deleteCartItem(id);
-            res.json(cartItem);
+            res.status(200).send({         
+                success : true,
+                message : "Cart item deleted successfully",
+                data : cartItem
+                });
         } catch (error) {
             next(error);
         }

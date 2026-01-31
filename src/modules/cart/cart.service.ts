@@ -9,19 +9,22 @@ export const CartService = {
         })
     },
 
-    async addCart(data: Cart) {
+    async addCart(userId: string) {
 
         const existCart = await prisma.cart.findUnique({
-            where: { id: data.id }
+           where : {
+            user_id : userId
+           }
         });
 
         if (existCart) {
-            throw new Error('Cart already exists');
+            return existCart;
         }
 
         const cart = await prisma.cart.create({
-            data: data
-        })
+            data: {
+                user_id: userId
+        }})
         return cart;
     },
 

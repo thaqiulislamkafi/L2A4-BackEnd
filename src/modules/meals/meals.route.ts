@@ -4,8 +4,8 @@ import { MealController } from "./meals.controller";
 
 export const MealRoute = Router();
 
-MealRoute.get('/api/meals',MealController.getMeals) ;
-MealRoute.get('/api/meals/:id',MealController.getMealById) ;
-MealRoute.post('/api/meals',MealController.addMeal) ;
-MealRoute.put('/api/meals/:id',MealController.updateMeal) ;
-MealRoute.delete('/api/meals/:id',MealController.deleteMeal) ;
+MealRoute.get('/',MealController.getMeals) ;
+MealRoute.get('/:id',MealController.getMealById) ;
+MealRoute.post('/',MealController.addMeal) ;
+MealRoute.put('/:id',MealController.updateMeal) ;
+MealRoute.delete('/:id',MealController.deleteMeal) ;

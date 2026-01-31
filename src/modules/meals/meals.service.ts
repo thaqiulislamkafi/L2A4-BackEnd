@@ -20,6 +20,7 @@ export const MealService = {
         const meal = await prisma.meal.create({
             data: data
         });
+        return meal;
     },
 
     async updateMeal(id: number, data: Partial<Meal>) {

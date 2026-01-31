@@ -135,7 +135,7 @@ model Review {
 
 model Cart {
   id        Int      @id @default(autoincrement())
-  user_id   String
+  user_id   String   @unique
   createdAt DateTime @default(now())
   user      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
@@ -152,4 +152,6 @@ model CartItem {
 
   cart Cart @relation(fields: [cart_id], references: [id], onDelete: Cascade)
   meal Meal @relation(fields: [meal_id], references: [id], onDelete: Cascade)
+
+  @@unique([cart_id, meal_id])
 }

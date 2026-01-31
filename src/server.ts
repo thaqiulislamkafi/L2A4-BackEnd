@@ -7,6 +7,8 @@ import { GlobalHandleError } from "./middlewares/globalHandleError";
 import { CuisineTypeRoute } from "./modules/cuisineTypes/cuisineType.route";
 import { CategoriesRoute } from "./modules/categories/categories.route";
 import { DietryTypeRoute } from "./modules/dietryTypes/dietryType.route";
+import { MealRoute } from "./modules/meals/meals.route";
+import { CartItemRoute } from "./modules/cartItem/cartItem.route";
 
 const app = express() ;
 app.use(cors()) ;
@@ -20,7 +22,8 @@ app.use('/api/cuisine-types',CuisineTypeRoute) ;
 app.use('/api/categories',CategoriesRoute) ;
 app.use('/api/dietry-types',DietryTypeRoute) ;
 
-
+app.use('/api/meals',MealRoute) ;  
+app.use('/api/cart-items',CartItemRoute) ;
 
 app.use(NotFound) ;
 app.use(GlobalHandleError);
