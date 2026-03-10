@@ -19,6 +19,24 @@ export const MealController = {
         }
     },
 
+    async getMealsById(req:Request,res:Response,next:NextFunction){
+
+        try {
+
+            const id = String(req.params.id);          
+            const meals = await MealService.findMealsById(id);
+
+            res.status(200).send({
+                success : true,
+                message : "Meal fetched successfully",
+                data : meals
+            });
+
+        } catch (error) {
+            next(error) ;
+        }
+    },
+
     async getMealById(req:Request,res:Response,next:NextFunction){
 
         try {

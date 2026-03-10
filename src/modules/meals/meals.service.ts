@@ -8,12 +8,35 @@ export const MealService = {
         return meals
     },
 
+    async findMealsById(id:string){
+
+        const meals = await prisma.meal.findMany({
+            where : {
+                provider_id : id
+            },
+            include : {
+                provider : true ,
+                category_rel : true,
+                cuisine_rel : true,
+                dietry_rel : true
+            }
+        })
+        return meals
+    },
+
     async findMealById(id: number) {
         const meal = await prisma.meal.findUnique({
             where: {
                 id: id
+            },
+            include : {
+                provider : true ,
+                category_rel : true,
+                cuisine_rel : true,
+                dietry_rel : true
             }
         })
+        return meal ;
     },
 
     async addMeal(data: Meal) {
@@ -30,6 +53,7 @@ export const MealService = {
             },
             data: data
         })
+        return updatedMeal ;
     },
 
     async deleteMeal(id: number) {
@@ -38,5 +62,6 @@ export const MealService = {
                 id: id
             }
         })
+        return deletedData ;
     }
 }

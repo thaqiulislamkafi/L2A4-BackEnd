@@ -11,7 +11,10 @@ import { MealRoute } from "./modules/meals/meals.route";
 import { CartItemRoute } from "./modules/cartItem/cartItem.route";
 
 const app = express() ;
-app.use(cors()) ;
+app.use(cors({
+    origin : ['http://localhost:3000'],
+    credentials : true
+})) ;
 app.use(express.json()) ;
 
 const PORT = process.env.PORT || 5000 ;
