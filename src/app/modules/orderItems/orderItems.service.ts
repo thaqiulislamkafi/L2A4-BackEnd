@@ -3,9 +3,9 @@ import { prisma } from "../../../lib/prisma";
 
 export const OrderItemsService = {
 
-    async addOrderItems(data:any,orderId:number) {
+    async addOrderItems(data: OrderItem[], orderId: number) {
 
-        const orderItemsData:OrderItem = data.map((item:any) => ({
+        const orderItemsData = data.map((item: OrderItem) => ({
             order_id: orderId,
             meal_id: item.meal_id,
             quantity: item.quantity,

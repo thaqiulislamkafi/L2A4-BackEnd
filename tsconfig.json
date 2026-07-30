@@ -1,17 +1,17 @@
 {
   "compilerOptions": {
-    "rootDir": "./",
+    "rootDir": "./src",
     "outDir": "./dist",
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "skipLibCheck": true,
     "target": "ES2023",
     "strict": true,
     "esModuleInterop": true,
   },
+  "include": ["src"],
   "exclude": [
     "node_modules",
     "dist",
-    "generated"
   ]
 }

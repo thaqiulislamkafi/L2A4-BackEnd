@@ -14,6 +14,7 @@ export const MealService = {
                 id: id
             }
         })
+        return meal
     },
 
     async addMeal(data: Meal) {
@@ -24,7 +25,7 @@ export const MealService = {
     },
 
     async updateMeal(id: number, data: Partial<Meal>) {
-        const updatedMeal = await prisma.meal.update({
+       return await prisma.meal.update({
             where: {
                 id: id
             },
@@ -33,10 +34,11 @@ export const MealService = {
     },
 
     async deleteMeal(id: number) {
-        const deletedData = await prisma.meal.delete({
+        return await prisma.meal.delete({
             where: {
                 id: id
             }
         })
+        
     }
 }

@@ -1,12 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from "express";
 import { Prisma } from "../../generated/prisma/client";
 
 
 export const GlobalHandleError = (err:any, req:Request, res:Response, next:NextFunction) => {
 
-    let statusCode:number = 500 ;
+    const statusCode:number = 500 ;
     let errorMessage:string = 'Internal Server Error' ;
-    let errorDetails = err ;
+    const errorDetails = err ;
 
     if((err) instanceof Prisma.PrismaClientKnownRequestError){
 

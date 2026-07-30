@@ -7,6 +7,8 @@ export const CartService = {
         const cart = await prisma.cart.findUnique({
             where: { id }
         })
+
+        return cart
     },
 
     async addCart(userId: string) {
