@@ -10,7 +10,7 @@ export class QueryBuilder {
 
     constructor(query: Tquery) {
 
-        this.query = query;
+        this.query = query || {};
         this.prismaQuery = {
             where: {}
         };
