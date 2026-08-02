@@ -9,12 +9,13 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
-  role    String?  @default("user")
-  status  String?  @default("active")
-  meals   Meal[]
-  reviews Review[]
-  carts   Cart[]
-  orders  Order[]
+  role          String?        @default("user")
+  status        String?        @default("active")
+  meals         Meal[]
+  reviews       Review[]
+  carts         Cart[]
+  orders        Order[]
+  GlobalReviews GlobalReview[]
 
   @@unique([email])
   @@map("user")
