@@ -1,11 +1,13 @@
 
 import { Router } from "express";
 import { MealController } from "./meals.controller";
+import { validate } from "../../middlewares/validate";
+import { addMealSchema, updateMealSchema } from "./meals.schema";
 
 export const MealRoute = Router();
 
 MealRoute.get('/',MealController.getMeals) ;
 MealRoute.get('/:id',MealController.getMealById) ;
-MealRoute.post('/',MealController.addMeal) ;
-MealRoute.put('/:id',MealController.updateMeal) ;
+MealRoute.post('/',validate(addMealSchema),MealController.addMeal) ;
+MealRoute.put('/:id',validate(updateMealSchema),MealController.updateMeal) ;
 MealRoute.delete('/:id',MealController.deleteMeal) ;

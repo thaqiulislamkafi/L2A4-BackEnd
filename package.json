@@ -6,11 +6,11 @@
   "scripts": {
     "postinstall": "prisma generate",
     "dev": "tsx watch src/server.ts",
-    "start" : "node dist/server.js",
-    "build" : "prisma generate && tsc && node scripts/fix-imports.js",
-    "generate" : "prisma generate",
-    "migrate" : "prisma migrate dev",
-    "lint" : "eslint ./src/**/*",
+    "start": "node dist/server.js",
+    "build": "prisma generate && tsc && node scripts/fix-imports.js",
+    "generate": "prisma generate",
+    "migrate": "prisma migrate dev",
+    "lint": "eslint ./src/**/*",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -37,6 +37,7 @@
   "dependencies": {
     "better-auth": "^1.4.17",
     "cors": "^2.8.6",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "zod": "^4.4.3"
   }
 }
