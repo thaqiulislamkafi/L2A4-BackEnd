@@ -8,6 +8,8 @@ export const MealRoute = Router();
 
 MealRoute.get('/',MealController.getMeals) ;
 MealRoute.get('/:id',MealController.getMealById) ;
+MealRoute.get('/provider/:provider_id',MealController.getMealsByProvider)
+
 MealRoute.post('/',validate(addMealSchema),MealController.addMeal) ;
 MealRoute.put('/:id',validate(updateMealSchema),MealController.updateMeal) ;
 MealRoute.delete('/:id',MealController.deleteMeal) ;

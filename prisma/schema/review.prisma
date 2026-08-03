@@ -5,7 +5,6 @@ model Review {
   rating    Int
   comment   String
   createdAt DateTime @default(now())
-
-  meal Meal @relation(fields: [meal_id], references: [id], onDelete: Cascade)
-  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  meal      Meal     @relation(fields: [meal_id], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
