@@ -66,6 +66,30 @@ export const MealController = {
         }
     },
 
+    async uploadMealImage(req: Request, res: Response, next: NextFunction){
+
+        try {
+            if (!req.file) {
+                return res.status(400).send({
+                    success: false,
+                    message: "No file uploaded"
+                });
+            }
+
+            res.status(200).send({
+                success: true,
+                message: "Meal image uploaded successfully",
+                data: {
+                    imageUrl: req.file.path,
+                    publicId: req.file.filename
+                }
+            });
+
+        } catch (error) {
+            next(error);
+        }
+    },
+
     async updateMeal(req:AuthRequest,res:Response,next:NextFunction){
 
         try {
