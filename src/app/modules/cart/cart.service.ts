@@ -3,7 +3,7 @@ import { prisma } from "../../../lib/prisma"
 
 export const CartService = {
 
-    async getCartById(id: number) {
+    async getCartById(id: string) {
         const cart = await prisma.cart.findUnique({
             where: { id }
         })
@@ -30,7 +30,7 @@ export const CartService = {
         return cart;
     },
 
-    async updateCart(id: number, data: Partial<Cart>) {
+    async updateCart(id: string, data: Partial<Cart>) {
 
         const cart = await prisma.cart.update({
             where: { id },
@@ -39,7 +39,7 @@ export const CartService = {
         return cart;
     },
 
-    async deleteCart(id: number) {
+    async deleteCart(id: string) {
         const cart = await prisma.cart.delete({
             where: { id }
         })

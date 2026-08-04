@@ -7,7 +7,7 @@ export const CuisineTypeService = {
         return chuiineTypes
     },
 
-    async getCuisineTypeById(id: number) {
+    async getCuisineTypeById(id:string) {
         const cuisineType = await prisma.cuisinetype.findUnique({
             where: { id },
         })
@@ -21,7 +21,7 @@ export const CuisineTypeService = {
         return newCuisineType
     },
 
-    async updateCuisineType(id: number, name: string) {
+    async updateCuisineType(id: string, name: string) {
         console.log(name);
 
         const updatedCuisineType = await prisma.cuisinetype.update({
@@ -31,7 +31,7 @@ export const CuisineTypeService = {
         return updatedCuisineType
     },
 
-    async deleteCuisineType(id: number) {
+    async deleteCuisineType(id: string) {
         const deletedCuisineType = await prisma.cuisinetype.delete({
             where: { id },
         })

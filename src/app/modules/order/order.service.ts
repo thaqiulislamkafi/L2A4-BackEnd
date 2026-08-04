@@ -37,7 +37,7 @@ export const OrderService = {
         return { order, orderItems };
     },
 
-    async cancelOrder(orderId: number, userId: string) {
+    async cancelOrder(orderId: string, userId: string) {
 
         const order = await prisma.order.findFirst({
             where: {

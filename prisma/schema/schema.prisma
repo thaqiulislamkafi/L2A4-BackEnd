@@ -14,25 +14,25 @@ datasource db {
 }
 
 model Categories {
-  id            Int    @id @default(autoincrement())
+  id            String   @id @default(uuid())
   category_name String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
   meals         Meal[]
 }
 
 model Cuisinetype {
-  id                Int    @id @default(autoincrement())
+  id                String   @id @default(uuid())
   cuisine_type_name String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
   meals             Meal[]
 }
 
 model Dietrytype {
-  id               Int    @id @default(autoincrement())
+  id               String   @id @default(uuid())
   dietry_type_name String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
   meals            Meal[]
 }
-
-
-
-
-
-

@@ -23,7 +23,7 @@ export const CuisineTypeController = {
     async getCuisineTypeById(req:Request, res:Response,next:NextFunction) {
 
         try {
-            const id = Number(req.params.id);
+            const id = String(req.params.id);
             const cuisineType = await CuisineTypeService.getCuisineTypeById(id);
             res.status(200).send({
                 success : true,
@@ -55,7 +55,7 @@ export const CuisineTypeController = {
     async updateCuisineType(req:Request, res:Response,next:NextFunction) {
 
         try {
-            const id = Number(req.params.id);
+            const id = String(req.params.id);
             const  name = req.body;
             const updatedCuisineType = await CuisineTypeService.updateCuisineType(id, name);
             res.status(200).send({
@@ -71,7 +71,7 @@ export const CuisineTypeController = {
     async deleteCuisineType(req:Request, res:Response,next:NextFunction) {
 
         try {
-            const id = Number(req.params.id);
+            const id = String(req.params.id);
             const deletedCuisineType = await CuisineTypeService.deleteCuisineType(id);
             res.status(200).send({
                 success : true,

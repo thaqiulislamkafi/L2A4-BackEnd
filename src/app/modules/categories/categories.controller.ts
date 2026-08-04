@@ -21,7 +21,7 @@ export const CategoriesController = {
     async getCategoryById(req: Request, res: Response, next: NextFunction) {
 
         try {
-            const id = Number(req.params.id);
+            const id = String(req.params.id);
             const category = await CategoriesService.getCategoryById(id);
             res.status(200).send({
                 success: true,
@@ -51,7 +51,7 @@ export const CategoriesController = {
     async updateCategory(req: Request, res: Response, next: NextFunction) {
 
         try {
-            const id = Number(req.params.id);
+            const id = String(req.params.id);
             const data = req.body;
             const category = await CategoriesService.updateCategory(id, data);
             res.status(200).send({
@@ -67,7 +67,7 @@ export const CategoriesController = {
     async deleteCategory(req: Request, res: Response, next: NextFunction) {
 
         try {
-            const id = Number(req.params.id);
+            const id = String(req.params.id);
             const category = await CategoriesService.deleteCategory(id);
             res.status(200).send({
                 success: true,

@@ -83,7 +83,7 @@ export const GlobalReviewsService = {
         };
     },
 
-    async getGlobalReviewById(id: number) {
+    async getGlobalReviewById(id: string) {
 
         const review = await prisma.globalReview.findUnique({
             where: {
@@ -106,7 +106,7 @@ export const GlobalReviewsService = {
         return newReview;
     },
 
-    async updateGlobalReview(id: number, data: Partial<GlobalReview>, user: User) {
+    async updateGlobalReview(id: string, data: Partial<GlobalReview>, user: User) {
 
         const existingReview = await prisma.globalReview.findUnique({
             where: { id }
@@ -134,7 +134,7 @@ export const GlobalReviewsService = {
         });
     },
 
-    async deleteGlobalReview(id: number, user: User) {
+    async deleteGlobalReview(id: string, user: User) {
 
         const existingReview = await prisma.globalReview.findUnique({
             where: { id }

@@ -1,5 +1,5 @@
 model GlobalReview {
-    id        Int      @id @default(autoincrement())
+    id        String   @id @default(uuid())
     user_id   String
     rating    Int
     comment   String

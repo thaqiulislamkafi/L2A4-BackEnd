@@ -1,17 +1,19 @@
 model Meal {
-  id                 Int         @id @default(autoincrement())
+  id                 String      @id @default(uuid())
   name               String
   image              String?
   description        String
-  cuisine_type       Int
-  dietry_type        Int
-  category           Int
+  cuisine_type       String
+  dietry_type        String
+  category           String
   availabilty_status String
   price              Int
   isHeroContent      Boolean     @default(false)
   isSliderContent    Boolean     @default(false)
   provider_id        String
   provider           User        @relation(fields: [provider_id], references: [id], onDelete: Cascade)
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
   category_rel       Categories  @relation(fields: [category], references: [id])
   cuisine_rel        Cuisinetype @relation(fields: [cuisine_type], references: [id])
   dietry_rel         Dietrytype  @relation(fields: [dietry_type], references: [id])

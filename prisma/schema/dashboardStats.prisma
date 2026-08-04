@@ -9,6 +9,7 @@ model DashboardStats {
     globalReviewsCreated Int    @default(0)
     ordersCreated        Int    @default(0)
     orderItemsCreated    Int    @default(0)
-
+    createdAt            DateTime @default(now())
+    updatedAt            DateTime @updatedAt
     @@unique([year, month])
 }

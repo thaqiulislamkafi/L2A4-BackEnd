@@ -38,7 +38,7 @@ export const CartItemController = {
     async deleteCartItem(req:Request, res:Response,next:NextFunction) {
 
         try {
-            const id = Number(req.params.id);
+            const id = String(req.params.id);
             const cartItem = await CartItemService.deleteCartItem(id);
             res.status(200).send({         
                 success : true,

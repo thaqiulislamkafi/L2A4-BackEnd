@@ -25,7 +25,7 @@ export const CartItemService = {
         return cartItem;
     },
 
-    async deleteCartItem(id: number) {
+    async deleteCartItem(id: string) {
         const cartItem = await prisma.cartItem.delete({
             where: { id }
         })

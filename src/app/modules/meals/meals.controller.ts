@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { MealService } from "./meals.service";
 import { AuthRequest } from "../../types/AuthRequest.type";
+import { DashboardStatsService } from "../dashboardStats/dashboardStats.service";
 
 export const MealController = {
 
@@ -23,7 +24,7 @@ export const MealController = {
     async getMealById(req:Request,res:Response,next:NextFunction){
 
         try {
-            const id = Number(req.params.id);
+            const id = String(req.params.id);
             const meal = await MealService.findMealById(id);
             res.status(200).send({
                 success : true,
@@ -56,6 +57,8 @@ export const MealController = {
         try {
             const mealData = req.body;
             const meal = await MealService.addMeal(mealData);
+            await DashboardStatsService.incrementMealsCreated();
+
             res.status(201).send({
                 success : true,
                 message : "Meal added successfully",
@@ -93,7 +96,7 @@ export const MealController = {
     async updateMeal(req:AuthRequest,res:Response,next:NextFunction){
 
         try {
-            const id = Number(req.params.id);
+            const id = String(req.params.id);
             const mealData = req.body;
 
             if(!req.user) throw new Error('User not found')
@@ -114,7 +117,7 @@ export const MealController = {
     async deleteMeal(req:AuthRequest,res:Response,next:NextFunction){
 
         try {
-            const id = Number(req.params.id);
+            const id = String(req.params.id);
 
             if(!req.user) throw new Error('User not found')
             const deletedMeal = await MealService.deleteMeal(id,req.user);

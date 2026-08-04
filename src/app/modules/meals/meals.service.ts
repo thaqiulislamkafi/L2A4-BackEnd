@@ -89,7 +89,7 @@ export const MealService = {
 
     },
 
-    async findMealById(id: number) {
+    async findMealById(id: string) {
 
         const meal = await prisma.meal.findUnique({
             where: {
@@ -113,7 +113,7 @@ export const MealService = {
         return meal;
     },
 
-    async updateMeal(id: number, data: Partial<Meal>, user: User) {
+    async updateMeal(id: string, data: Partial<Meal>, user: User) {
 
         if (user.role === 'admin') {
             return await prisma.meal.update({
@@ -136,7 +136,7 @@ export const MealService = {
 
     },
 
-    async deleteMeal(id: number, user: User) {
+    async deleteMeal(id: string, user: User) {
 
         if (user.role === 'admin') {
             return await prisma.meal.delete({

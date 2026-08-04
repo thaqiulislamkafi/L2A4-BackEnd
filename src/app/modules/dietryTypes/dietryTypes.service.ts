@@ -7,7 +7,7 @@ export const DietryTypesService = {
         return dietryTypes;
     },
 
-    async getDietryTypeById(id: number) {
+    async getDietryTypeById(id: string) {
         const dietryType = await prisma.dietrytype.findUnique({
             where: { id },
         });
@@ -21,7 +21,7 @@ export const DietryTypesService = {
         return newDietryType;
     },
 
-    async updateDietryType(id: number, name: string) {
+    async updateDietryType(id: string, name: string) {
         const updatedDietryType = await prisma.dietrytype.update({
             where: { id },
             data: name
@@ -29,7 +29,7 @@ export const DietryTypesService = {
         return updatedDietryType;
     },
 
-    async deleteDietryType(id: number) {
+    async deleteDietryType(id: string) {
         const deletedDietryType = await prisma.dietrytype.delete({
             where: { id },
         });

@@ -42,7 +42,7 @@ export const ReviewsService = {
         }
     },
 
-    async getReviewsByMealId(mealId: number, query: Record<string, unknown>) {
+    async getReviewsByMealId(mealId: string, query: Record<string, unknown>) {
 
         const qb = new QueryBuilder(query)
             .sort()
@@ -127,7 +127,7 @@ export const ReviewsService = {
         }
     },
 
-    async getReviewById(id: number) {
+    async getReviewById(id: string) {
 
         const review = await prisma.review.findUnique({
             where: {
@@ -150,7 +150,7 @@ export const ReviewsService = {
         return newReview
     },
 
-    async updateReview(id: number, data: Partial<Review>, user: User) {
+    async updateReview(id: string, data: Partial<Review>, user: User) {
 
         if (user.role === 'admin') {
             return await prisma.review.update({
@@ -172,7 +172,7 @@ export const ReviewsService = {
         }
     },
 
-    async deleteReview(id: number, user: User) {
+    async deleteReview(id: string, user: User) {
 
         if (user.role === 'admin') {
             return await prisma.review.delete({

@@ -3,7 +3,7 @@ import { prisma } from "../../../lib/prisma";
 
 export const OrderItemsService = {
 
-    async addOrderItems(data: OrderItem[], orderId: number) {
+    async addOrderItems(data: OrderItem[], orderId: string) {
 
         const orderItemsData = data.map((item: OrderItem) => ({
             order_id: orderId,

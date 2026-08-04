@@ -44,7 +44,7 @@ export const GlobalReviewsController = {
 
         try {
 
-            const id = Number(req.params.id);
+            const id = String(req.params.id);
 
             const review = await GlobalReviewsService.getGlobalReviewById(id);
 
@@ -82,7 +82,7 @@ export const GlobalReviewsController = {
 
         try {
 
-            const id = Number(req.params.id);
+            const id = String(req.params.id);
             const reviewData = req.body;
 
             if (!req.user) throw new Error("User not found");
@@ -108,7 +108,7 @@ export const GlobalReviewsController = {
 
         try {
 
-            const id = Number(req.params.id);
+            const id = String(req.params.id);
 
             if (!req.user) throw new Error("User not found");
 

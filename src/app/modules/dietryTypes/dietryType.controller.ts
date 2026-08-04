@@ -23,7 +23,7 @@ export const DietryTypesController = {
     async getDietryTypeById(req:Request, res:Response,next:NextFunction) {
 
         try {
-            const id = Number(req.params.id);
+            const id = String(req.params.id);
             const dietryType = await DietryTypesService.getDietryTypeById(id);
             res.status(200).send({
                 success : true,
@@ -53,7 +53,7 @@ export const DietryTypesController = {
     async updateDietryType(req:Request, res:Response,next:NextFunction) {
 
         try {
-            const id = Number(req.params.id);
+            const id = String(req.params.id);
             const  name  = req.body;
             const dietryType = await DietryTypesService.updateDietryType(id, name);
             res.status(200).send({
@@ -69,7 +69,7 @@ export const DietryTypesController = {
     async deleteDietryType(req:Request, res:Response,next:NextFunction) {
 
         try {
-            const id = Number(req.params.id);
+            const id = String(req.params.id);
             const dietryType = await DietryTypesService.deleteDietryType(id);
             res.status(200).send({
                 success : true,
