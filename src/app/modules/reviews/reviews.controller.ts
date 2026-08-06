@@ -21,7 +21,7 @@ export const ReviewsController = {
     async getReviewsByMealId(req: Request, res: Response, next: NextFunction) {
 
         try {
-            const mealId = Number(req.params.mealId);
+            const mealId = String(req.params.mealId);
             const reviews = await ReviewsService.getReviewsByMealId(mealId, req.query);
             res.status(200).send({
                 success: true,
@@ -52,7 +52,7 @@ export const ReviewsController = {
     async getReviewById(req: Request, res: Response, next: NextFunction) {
 
         try {
-            const id = Number(req.params.id);
+            const id = String(req.params.id);
             const review = await ReviewsService.getReviewById(id);
             res.status(200).send({
                 success: true,
@@ -83,7 +83,7 @@ export const ReviewsController = {
 
         try {
 
-            const id = Number(req.params.id);
+            const id = String(req.params.id);
             const reviewData = req.body;
 
             if (!req.user) throw new Error('User not found');
@@ -103,7 +103,7 @@ export const ReviewsController = {
 
         try {
 
-            const id = Number(req.params.id);
+            const id = String(req.params.id);
             if (!req.user) throw new Error('User not found');
 
             const deletedReview = await ReviewsService.deleteReview(id, req.user);
