@@ -265,13 +265,13 @@ export const authClient = createAuthClient({
 
 ## Key Points
 
-| Aspect | Details |
-|--------|---------|
-| **No handler mounting** | You don't use `toNodeHandler(auth)` |
-| **API object** | Access all endpoints via `auth.api.*` |
-| **Error handling** | Use `isAPIError()` from `better-auth/api` |
-| **Cookies** | Pass `returnHeaders: true` and forward `Set-Cookie` headers |
-| **Headers** | Use `fromNodeHeaders(req.headers)` to convert Node headers |
+| Aspect                  | Details                                                     |
+| ----------------------- | ----------------------------------------------------------- |
+| **No handler mounting** | You don't use `toNodeHandler(auth)`                         |
+| **API object**          | Access all endpoints via `auth.api.*`                       |
+| **Error handling**      | Use `isAPIError()` from `better-auth/api`                   |
+| **Cookies**             | Pass `returnHeaders: true` and forward `Set-Cookie` headers |
+| **Headers**             | Use `fromNodeHeaders(req.headers)` to convert Node headers  |
 
 ## Available API Methods
 

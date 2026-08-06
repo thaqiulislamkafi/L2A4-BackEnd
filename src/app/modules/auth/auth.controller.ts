@@ -50,6 +50,88 @@ export const AuthController = {
         } catch (error) {
             next(error)
         }
+    },
+
+    async RequestPasswordReset(req: AuthRequest, res: Response, next: NextFunction) {
+
+        try {
+            const result = await AuthService.RequestPasswordReset(req.body.email);
+
+            res.status(200).json({
+                success: true,
+                message: 'Password reset request successful',
+                data: result.message,
+            });
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    async ResetPassword(req: AuthRequest, res: Response, next: NextFunction) {
+
+        try {
+            const result = await AuthService.ResetPassword(req.body);
+            res.status(200).json({
+                success: true,
+                message: 'Password reset successful',
+                data: result.status
+            });
+
+        } catch (error) {
+            next(error)
+        }
+
+    },
+
+    async forgotPasswordByOTP(req: AuthRequest, res: Response, next: NextFunction) {
+
+        try {
+            const { email } = req.body;
+            const result = await AuthService.forgotPasswordByOTP(email);
+
+            res.status(200).json({
+                success: true,
+                message: 'OTP send Succeefully to email',
+                data: result.success
+            });
+
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    async verifyOTP(req: AuthRequest, res: Response, next: NextFunction) {
+
+        try {
+            const { email, otp } = req.body;
+            const result = await AuthService.verifyOtp(email, otp);
+
+            res.status(200).json({
+                success: true,
+                message: 'OTP verified Successfully',
+                data: result.success
+            });
+
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    async resetPasswordByOTP(req: AuthRequest, res: Response, next: NextFunction) {
+
+        try {
+            const { email, otp, newPassword } = req.body;
+            const result = await AuthService.resetPasswordByOTP(email, otp, newPassword);
+
+            res.status(200).json({
+                success: true,
+                message: 'Password reset by OTP Successfully',
+                data: result.success
+            });
+
+        } catch (error) {
+            next(error)
+        }
     }
 
 };
