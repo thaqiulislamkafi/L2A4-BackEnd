@@ -8,8 +8,11 @@ model User {
   updatedAt     DateTime       @updatedAt
   sessions      Session[]
   accounts      Account[]
-  role          String?        @default("user")
-  status        String?        @default("active")
+  contact       String         @default("")
+  age           Int?
+  address       String?
+  role          UserRole       @default(user)
+  status        UserStatus     @default(active)
   meals         Meal[]
   reviews       Review[]
   carts         Cart[]

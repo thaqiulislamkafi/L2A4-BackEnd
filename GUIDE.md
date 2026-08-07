@@ -287,3 +287,185 @@ export const authClient = createAuthClient({
 - `auth.api.updateUser()` - Update user info
 
 This approach gives you full control over your API routes while still leveraging Better Auth's core functionality!
+
+
+  Here's how to set up **password reset with OTP** using the Email OTP plugin in your Prisma + Express + TypeScript server.
+
+## 1. Server-side Setup
+
+```ts title="auth.ts"
+import { betterAuth } from "better-auth";
+import { prismaAdapter } from "better-auth/adapters/prisma";
+import { emailOTP } from "better-auth/plugins";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+export const auth = betterAuth({
+  database: prismaAdapter(prisma, {
+    provider: "postgresql", // or "mysql", "sqlite"
+  }),
+  plugins: [
+    emailOTP({
+      async sendVerificationOTP({ email, otp, type }) {
+        // Determine the email subject based on type
+        let subject = "Your verification code";
+        if (type === "forget-password") {
+          subject = "Reset your password";
+        }
+
+        // Send the OTP via your email provider (e.g., Resend, SendGrid, SMTP)
+        void sendEmail({
+          to: email,
+          subject,
+          text: `Your OTP code is: ${otp}`,
+          // Or use HTML template
+          html: `<p>Your OTP code is: <strong>${otp}</strong></p>`,
+        });
+      },
+      otpLength: 6,        // default
+      expiresIn: 300,      // 5 minutes in seconds
+      allowedAttempts: 3,   // max verification attempts
+    }),
+  ],
+});
+
+// Your email sending function
+async function sendEmail({ to, subject, text, html }: any) {
+  // Implement with your email provider
+  console.log(`Sending OTP ${text} to ${to}`);
+}
+```
+
+## 2. Express Routes
+
+```ts title="server.ts"
+import express from "express";
+import { toNodeHandler } from "better-auth/node";
+import { auth } from "./auth";
+
+const app = express();
+
+// Mount Better Auth handlers at /api/auth
+app.all("/api/auth/*", toNodeHandler(auth));
+
+app.use(express.json());
+
+// Step 1: Request password reset OTP
+app.post("/forgot-password", async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    // Send forget-password OTP to user's email
+    await auth.api.requestPasswordResetEmailOTP({
+      body: { email },
+    });
+
+    res.json({
+      success: true,
+      message: "OTP sent to your email",
+    });
+  } catch (error) {
+    // Don't reveal if email exists for security
+    res.json({
+      success: true,
+      message: "If email exists, OTP has been sent",
+    });
+  }
+});
+
+// Step 2: Verify OTP & Reset Password (server-side validation optional)
+app.post("/verify-otp", async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    // Optional: Check if OTP is valid before resetting
+    const result = await auth.api.checkVerificationOTP({
+      body: {
+        email,
+        type: "forget-password",
+        otp,
+      },
+    });
+
+    res.json({ valid: true });
+  } catch (error) {
+    res.status(400).json({ valid: false, error });
+  }
+});
+
+// Step 3: Reset password with OTP
+app.post("/reset-password", async (req, res) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+
+    await auth.api.resetPasswordEmailOTP({
+      body: {
+        email,
+        otp,
+        password: newPassword,
+      },
+    });
+
+    res.json({
+      success: true,
+      message: "Password reset successfully",
+    });
+  } catch (error: any) {
+    res.status(400).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+app.listen(3000, () => {
+  console.log("Server running on port 3000");
+});
+```
+
+## 3. Client-side Flow
+
+```ts title="auth-client.ts"
+import { createAuthClient } from "better-auth/client";
+import { emailOTPClient } from "better-auth/client/plugins";
+
+export const authClient = createAuthClient({
+  baseURL: "http://localhost:3000",
+  plugins: [emailOTPClient()],
+});
+```
+
+### Step 1: Request OTP
+```ts
+await authClient.emailOtp.requestPasswordReset({
+  email: "user@example.com",
+});
+```
+
+### Step 2: Reset Password with OTP
+```ts
+const { data, error } = await authClient.emailOtp.resetPassword({
+  email: "user@example.com",
+  otp: "123456",
+  password: "newSecurePassword123",
+});
+```
+
+## Key Configuration Options
+
+| Option            | Default    | Description                                |
+| ----------------- | ---------- | ------------------------------------------ |
+| `otpLength`       | `6`        | Length of OTP                              |
+| `expiresIn`       | `300`      | OTP expiry in seconds (5 min)              |
+| `allowedAttempts` | `3`        | Max attempts before invalid                |
+| `resendStrategy`  | `"rotate"` | `"rotate"` = new OTP, `"reuse"` = same OTP |
+
+## Security Notes
+
+1. **Don't await email sending** - Use `void` to prevent timing attacks
+2. **Generic responses** - Always return success even if email doesn't exist
+3. **Rate limiting** - Implement rate limiting on OTP endpoints
+4. **Allowed attempts** - OTP invalidates after max attempts exceeded
+
+That's it! The Email OTP plugin handles token generation, storage, verification, and expiration automatically.

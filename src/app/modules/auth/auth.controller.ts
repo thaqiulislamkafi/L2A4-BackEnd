@@ -51,6 +51,20 @@ export const AuthController = {
             next(error)
         }
     },
+    
+    async changePassword(req: AuthRequest, res: Response, next: NextFunction) {
+
+        try {
+            const result = await AuthService.changePassword(req.body, req);
+            res.status(200).json({
+                success: true,
+                message: 'Password changed successfully',
+                data: result.user,
+            });
+        } catch (error) {
+            next(error)
+        }
+    },
 
     async RequestPasswordReset(req: AuthRequest, res: Response, next: NextFunction) {
 
@@ -132,6 +146,19 @@ export const AuthController = {
         } catch (error) {
             next(error)
         }
-    }
+    },
 
+    async logOutAllSessions(req: AuthRequest, res: Response, next: NextFunction) {
+
+        try {
+            const result = await AuthService.logOutAllSessions(req);
+            return res.status(200).json({
+                success: true,
+                message: 'All sessions logged out successfully',
+                data: result.status
+            });
+        } catch (error) {
+            next(error)
+        }
+    }
 };
