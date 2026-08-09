@@ -1,42 +1,5 @@
 import z from "zod";
 
-
-/**
- * export const addMealSchema = z.object({
-     
-     name: z.string("Meal name is required")
-         .min(3, "Meal name must be at least 3 characters long"),
- 
-     image: z.url("Image must be a valid URL").optional(),
- 
-     description: z.string("Description is required")
-         .min(10, "Description must be at least 10 characters long"),
- 
-     cuisine_type: z.number("Cuisine type is required")
-         .int("Cuisine type must be an integer")
-         .positive("Cuisine type must be positive"),
- 
-     dietry_type: z.number("Dietary type is required")
-         .int("Dietary type must be an integer")
-         .positive("Dietary type must be positive"),
- 
-     category: z.number("Category is required")
-         .int("Category must be an integer")
-         .positive("Category must be positive"),
- 
-     availabilty_status: z.enum(
-         ["AVAILABLE", "UNAVAILABLE"],
-         "Availability status must be AVAILABLE or UNAVAILABLE"
-     ),
- 
-     price: z.number("Price is required")
-         .int("Price must be an integer")
-         .nonnegative("Price cannot be negative"),
- 
-     provider_id: z.string("Provider ID is required")
- });
- 
- */
 export const signinSchema = z.object({
     email: z.email("Email must be a valid email address"),
     password: z.string("Password is required")
