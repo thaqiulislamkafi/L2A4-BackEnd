@@ -2,13 +2,9 @@
 import { z } from "zod";
 
 export const addCartItemSchema = z.object({
-    cart_id: z.number("Cart ID is required")
-        .int("Cart ID must be an integer")
-        .positive("Cart ID must be positive"),
+    cart_id: z.string("Cart ID is required"),
 
-    meal_id: z.number("Meal ID is required")
-        .int("Meal ID must be an integer")
-        .positive("Meal ID must be positive"),
+    meal_id: z.string("Meal ID is required"),
 
     quantity: z.number()
         .int("Quantity must be an integer")
@@ -21,15 +17,9 @@ export const addCartItemSchema = z.object({
 });
 
 export const updateCartItemSchema = z.object({
-    cart_id: z.number()
-        .int("Cart ID must be an integer")
-        .positive("Cart ID must be positive")
-        .optional(),
+    cart_id: z.string().optional(),
 
-    meal_id: z.number()
-        .int("Meal ID must be an integer")
-        .positive("Meal ID must be positive")
-        .optional(),
+    meal_id: z.string().optional(),
 
     quantity: z.number()
         .int("Quantity must be an integer")

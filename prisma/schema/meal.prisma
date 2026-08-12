@@ -20,4 +20,5 @@ model Meal {
   reviews            Review[]
   cartItems          CartItem[]
   orderItems         OrderItem[]
+  mealAnalytics      MealAnalytics[]
 }

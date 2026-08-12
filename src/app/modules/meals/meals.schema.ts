@@ -11,28 +11,23 @@ export const addMealSchema = z.object({
     description: z.string("Description is required")
         .min(10, "Description must be at least 10 characters long"),
 
-    cuisine_type: z.number("Cuisine type is required")
-        .int("Cuisine type must be an integer")
-        .positive("Cuisine type must be positive"),
+    cuisine_type: z.string("Cuisine type is required"),
 
-    dietry_type: z.number("Dietary type is required")
-        .int("Dietary type must be an integer")
-        .positive("Dietary type must be positive"),
+    dietry_type: z.string("Dietary type is required"),
 
-    category: z.number("Category is required")
-        .int("Category must be an integer")
-        .positive("Category must be positive"),
+    category: z.string("Category is required"),
 
-    availabilty_status: z.enum(
-        ["AVAILABLE", "UNAVAILABLE"],
-        "Availability status must be AVAILABLE or UNAVAILABLE"
-    ),
+    availabilty_status: z.string("Availability status is required"),
 
     price: z.number("Price is required")
         .int("Price must be an integer")
         .nonnegative("Price cannot be negative"),
 
-    provider_id: z.string("Provider ID is required")
+    provider_id: z.string("Provider ID is required"),
+
+    isHeroContent: z.boolean().optional(),
+
+    isSliderContent: z.boolean().optional()
 });
 
 export const updateMealSchema = z.object({
@@ -47,30 +42,22 @@ export const updateMealSchema = z.object({
         .min(10, "Description must be at least 10 characters long")
         .optional(),
 
-    cuisine_type: z.number()
-        .int("Cuisine type must be an integer")
-        .positive("Cuisine type must be positive")
-        .optional(),
+    cuisine_type: z.string().optional(),
 
-    dietry_type: z.number()
-        .int("Dietary type must be an integer")
-        .positive("Dietary type must be positive")
-        .optional(),
+    dietry_type: z.string().optional(),
 
-    category: z.number()
-        .int("Category must be an integer")
-        .positive("Category must be positive")
-        .optional(),
+    category: z.string().optional(),
 
-    availabilty_status: z.enum(
-        ["AVAILABLE", "UNAVAILABLE"],
-        "Availability status must be AVAILABLE or UNAVAILABLE"
-    ).optional(),
+    availabilty_status: z.string().optional(),
 
     price: z.number()
         .int("Price must be an integer")
         .nonnegative("Price cannot be negative")
         .optional(),
 
-    provider_id: z.string().optional()
+    provider_id: z.string().optional(),
+
+    isHeroContent: z.boolean().optional(),
+
+    isSliderContent: z.boolean().optional()
 });

@@ -1,0 +1,12 @@
+model MealAnalytics {
+    id            String   @id @default(uuid())
+    mealId        String   @unique
+    providerId    String
+    totalReviews  Int      @default(0)
+    totalOrders   Int      @default(0)
+    averageRating Float    @default(0.0)
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+    meal          Meal     @relation(fields: [mealId], references: [id])
+    provider      User     @relation(fields: [providerId], references: [id])
+}
