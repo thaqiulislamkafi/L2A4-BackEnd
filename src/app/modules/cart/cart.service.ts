@@ -1,5 +1,6 @@
 import { Cart } from "../../../generated/prisma/client"
 import { prisma } from "../../../lib/prisma"
+import { TransactionClient } from "../../types/transactionClient.type"
 
 export const CartService = {
 
@@ -11,9 +12,9 @@ export const CartService = {
         return cart
     },
 
-    async addCart(userId: string) {
+    async addCart(userId: string, tx : TransactionClient = prisma) {
 
-        const existCart = await prisma.cart.findUnique({
+        const existCart = await tx.cart.findUnique({
            where : {
             user_id : userId
            }
@@ -23,7 +24,7 @@ export const CartService = {
             return existCart;
         }
 
-        const cart = await prisma.cart.create({
+        const cart = await tx.cart.create({
             data: {
                 user_id: userId
         }})

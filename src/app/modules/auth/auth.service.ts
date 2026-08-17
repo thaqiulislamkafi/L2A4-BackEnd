@@ -1,16 +1,20 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { auth } from "../../../lib/auth";
 import { fromNodeHeaders } from "better-auth/node";
 import { AuthRequest } from "../../types/AuthRequest.type";
 import { prisma } from "../../../lib/prisma";
 import { QueryBuilder } from "../../utils/QueryBuilder";
+import { DashboardStatsService } from "../dashboardStats/dashboardStats.service";
+import { getMonthAndDate } from "../../utils/getMonthAndDate";
+import { CartService } from "../cart/cart.service";
 
 export const AuthService = {
 
     async getAllUsers(query: Record<string, unknown>) {
 
         const qb = new QueryBuilder(query)
-            .search(['email','name'])
+            .search(['email', 'name'])
             .sort()
             .paginate()
 
@@ -56,7 +60,20 @@ export const AuthService = {
             returnHeaders: true,
         });
 
-        return result;
+        const date = await getMonthAndDate(String(result.response.user.createdAt));
+
+        return await prisma.$transaction(async (tx) => {
+
+            if (result.response.user.role === 'user') {
+                await DashboardStatsService.incrementUsersJoined(date.year, date.month,tx);
+                await CartService.addCart(result.response.user.id,tx);
+            }
+            else if (result.response.user.role === 'provider') {
+                await DashboardStatsService.incrementProvidersJoined(date.year, date.month,tx);
+            }
+
+            return result;
+        })
     },
 
     async SignIn(data: any, req: AuthRequest) {
@@ -83,12 +100,12 @@ export const AuthService = {
     async changePassword(data: { password: string; newPassword: string }, req: AuthRequest) {
 
         const result = await auth.api.changePassword({
-           body : {
-            newPassword : data.newPassword,
-            currentPassword : data.password,
-            revokeOtherSessions : true,
-           },
-           headers : fromNodeHeaders(req.headers)
+            body: {
+                newPassword: data.newPassword,
+                currentPassword: data.password,
+                revokeOtherSessions: true,
+            },
+            headers: fromNodeHeaders(req.headers)
         });
         return result;
     },
@@ -151,5 +168,29 @@ export const AuthService = {
         });
 
         return result;
+    },
+
+    async deleteUser(userId: string) {
+
+        return await prisma.$transaction(async (tx) => {
+
+            const result = await tx.user.delete({
+                where: {
+                    id: userId
+                }
+            });
+
+            const date = await getMonthAndDate(String(result.createdAt));
+            await DashboardStatsService.decrementUsersJoined(date.year, date.month, tx);
+
+            return result;
+        })
+    },
+
+    async deleteAllUsers() {
+
+        const result = await prisma.user.deleteMany();
+        return result;
+
     }
 }

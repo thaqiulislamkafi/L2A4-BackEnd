@@ -19,3 +19,5 @@ AuthRoute.post('/verify-otp',validate(changePasswordSchema),AuthController.verif
 AuthRoute.post('/resetpassword-by-otp',validate(changePasswordSchema),AuthController.resetPasswordByOTP);
 
 AuthRoute.post('/logout-all',AuthController.logOutAllSessions) ;
+AuthRoute.delete('/:id',AuthController.deleteUser) ;
+AuthRoute.delete('/',AuthController.deleteAllUsers) ;

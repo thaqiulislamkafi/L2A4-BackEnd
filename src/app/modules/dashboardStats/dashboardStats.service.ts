@@ -1,5 +1,8 @@
-import { DashboardStats } from "../../../generated/prisma/client";
+import { DashboardStats} from "../../../generated/prisma/client";
 import { prisma } from "../../../lib/prisma";
+import { TransactionClient } from "../../types/transactionClient.type";
+
+
 
 export const DashboardStatsService = {
 
@@ -64,9 +67,9 @@ export const DashboardStatsService = {
         });
     },
 
-    async incrementUsersJoined(year:number,month:number) {
+    async incrementUsersJoined(year:number,month:number,tx : TransactionClient = prisma) {
 
-        return prisma.dashboardStats.upsert({
+        return tx.dashboardStats.upsert({
             where: {
                 year_month: {
                     year: year,
@@ -86,9 +89,9 @@ export const DashboardStatsService = {
         });
     },
 
-    async decrementUsersJoined(year:number,month:number) {
+    async decrementUsersJoined(year:number,month:number,tx: TransactionClient = prisma) {
 
-        return prisma.dashboardStats.update({
+        return tx.dashboardStats.update({
             where: {
                 year_month: {
                     year: year,
@@ -103,9 +106,9 @@ export const DashboardStatsService = {
         });
     },
 
-    async incrementProvidersJoined(year:number,month:number) {
+    async incrementProvidersJoined(year:number,month:number,tx :TransactionClient = prisma) {
 
-        return prisma.dashboardStats.upsert({
+        return tx.dashboardStats.upsert({
             where: {
                 year_month: {
                     year: year,

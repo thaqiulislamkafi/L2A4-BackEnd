@@ -1,10 +1,9 @@
 model Cart {
   id        String     @id @default(uuid())
   user_id   String     @unique
-  createdAt DateTime   @default(now())
   user      User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  createdt  DateTime   @default(now())
-  updatedt  DateTime   @updatedAt
+  createdAt DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
   cartItems CartItem[]
 }
 
@@ -14,11 +13,10 @@ model CartItem {
   meal_id   String
   quantity  Int      @default(1)
   price     Int
-  createdAt DateTime @default(now())
   cart      Cart     @relation(fields: [cart_id], references: [id], onDelete: Cascade)
   meal      Meal     @relation(fields: [meal_id], references: [id], onDelete: Cascade)
-  createdt  DateTime @default(now())
-  updatedt  DateTime @updatedAt
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   @@unique([cart_id, meal_id])
 }

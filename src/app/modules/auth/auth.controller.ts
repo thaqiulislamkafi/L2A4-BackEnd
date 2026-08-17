@@ -3,6 +3,7 @@ import { AuthRequest } from "../../types/AuthRequest.type";
 import { appendCookies } from "../../utils/appendCookies";
 import { AuthService } from "./auth.service";
 
+
 export const AuthController = {
 
     async SignUp(req: AuthRequest, res: Response, next: NextFunction) {
@@ -156,6 +157,37 @@ export const AuthController = {
                 success: true,
                 message: 'All sessions logged out successfully',
                 data: result.status
+            });
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    async deleteUser(req: AuthRequest, res: Response, next: NextFunction){
+
+        try {
+            const user_id = req.params.id ;
+            const result = await AuthService.deleteUser(String(user_id));
+
+            return res.status(200).json({
+                success: true,
+                message: 'User Deleted successfully',
+                data: result
+            });
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    async deleteAllUsers(req: AuthRequest, res: Response, next: NextFunction){
+
+         try {
+            const result = await AuthService.deleteAllUsers();
+
+            return res.status(200).json({
+                success: true,
+                message: 'All users are deleted successfully',
+                data: result
             });
         } catch (error) {
             next(error)
