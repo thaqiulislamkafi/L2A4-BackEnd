@@ -10,3 +10,10 @@ enum UserRole {
     admin
     provider
 }
+
+enum SettingType {
+  STRING 
+  BOOLEAN
+  NUMBER
+  JSON
+}
