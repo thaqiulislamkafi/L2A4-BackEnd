@@ -1,5 +1,6 @@
 
 import { prisma } from "../../../lib/prisma";
+import { TransactionClient } from "../../types/transactionClient.type";
 
 export const MealAnalyticsService = {
 
@@ -15,9 +16,9 @@ export const MealAnalyticsService = {
 
     },
 
-    async addMealAnalyticsData(mealId: string,providerId:string){
+    async addMealAnalyticsData(mealId: string,providerId:string ,tx : TransactionClient = prisma){
 
-        return await prisma.mealAnalytics.create({
+        return await tx.mealAnalytics.create({
             data: {
                 mealId: mealId,
                 providerId: providerId,
@@ -26,9 +27,9 @@ export const MealAnalyticsService = {
         });
     },
 
-    async incrementReviewAnalyticsData(mealId:string){
+    async incrementReviewAnalyticsData(mealId:string ,tx : TransactionClient = prisma){
 
-        await prisma.mealAnalytics.update({
+        await tx.mealAnalytics.update({
             where : {
                 mealId : mealId
             },
@@ -40,9 +41,9 @@ export const MealAnalyticsService = {
         })
     },
 
-    async decrementReviewAnalyticsData(mealId:string){
+    async decrementReviewAnalyticsData(mealId:string,tx : TransactionClient = prisma){
 
-        await prisma.mealAnalytics.update({
+        await tx.mealAnalytics.update({
             where : {
                 mealId : mealId
             },
@@ -54,9 +55,9 @@ export const MealAnalyticsService = {
         })
     },
 
-    async incrementOrderAnalyticsData(mealId : string){
+    async incrementOrderAnalyticsData(mealId : string ,tx : TransactionClient = prisma){
 
-        await prisma.mealAnalytics.update({
+        await tx.mealAnalytics.update({
             where : {
                 mealId
             },
@@ -68,9 +69,9 @@ export const MealAnalyticsService = {
         })
     },
 
-    async decrementOrderAnalyticsData(mealId : string){
+    async decrementOrderAnalyticsData(mealId : string ,tx : TransactionClient = prisma){
 
-        await prisma.mealAnalytics.update({
+        await tx.mealAnalytics.update({
             where : {
                 mealId
             },

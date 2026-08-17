@@ -128,9 +128,9 @@ export const DashboardStatsService = {
         });
     },
 
-    async decrementProvidersJoined(year:number,month:number) {
+    async decrementProvidersJoined(year:number,month:number,tx :TransactionClient = prisma) {
 
-        return prisma.dashboardStats.update({
+        return tx.dashboardStats.update({
             where: {
                 year_month: {
                     year: year,
@@ -145,9 +145,9 @@ export const DashboardStatsService = {
         });
     },
 
-    async incrementMealsCreated(year:number,month:number) {
+    async incrementMealsCreated(year:number,month:number,tx :TransactionClient = prisma) {
 
-        return prisma.dashboardStats.upsert({
+        return tx.dashboardStats.upsert({
             where: {
                 year_month: {
                     year: year,
@@ -167,9 +167,9 @@ export const DashboardStatsService = {
         });
     },
 
-    async decrementMealsCreated(year:number,month:number) {
+    async decrementMealsCreated(year:number,month:number, tx :TransactionClient = prisma) {
 
-        return prisma.dashboardStats.update({
+        return tx.dashboardStats.update({
             where: {
                 year_month: {
                     year: year,
@@ -184,9 +184,9 @@ export const DashboardStatsService = {
         });
     },
 
-    async incrementReviewsCreated(year:number,month:number) {
+    async incrementReviewsCreated(year:number,month:number,tx :TransactionClient = prisma) {
 
-        return prisma.dashboardStats.upsert({
+        return tx.dashboardStats.upsert({
             where: {
                 year_month: {
                     year: year,
@@ -206,9 +206,9 @@ export const DashboardStatsService = {
         });
     },
 
-    async decrementReviewsCreated(year:number,month:number) {
+    async decrementReviewsCreated(year:number,month:number, tx :TransactionClient = prisma) {
 
-        return prisma.dashboardStats.update({
+        return tx.dashboardStats.update({
             where: {
                 year_month: {
                     year:  year,
@@ -223,9 +223,9 @@ export const DashboardStatsService = {
         });
     },
 
-    async incrementGlobalReviewsCreated(year:number,month:number) {
+    async incrementGlobalReviewsCreated(year:number,month:number ,tx :TransactionClient = prisma) {
 
-        return prisma.dashboardStats.upsert({
+        return tx.dashboardStats.upsert({
             where: {
                 year_month: {
                     year: year,
@@ -245,9 +245,9 @@ export const DashboardStatsService = {
         });
     },
 
-    async decrementGlobalReviewsCreated(year:number,month:number) {
+    async decrementGlobalReviewsCreated(year:number,month:number, tx :TransactionClient = prisma) {
 
-        return prisma.dashboardStats.update({
+        return tx.dashboardStats.update({
             where: {
                 year_month: {
                     year: year,
@@ -262,9 +262,9 @@ export const DashboardStatsService = {
         });
     },
 
-    async incrementOrdersCreated(year:number,month:number) {
+    async incrementOrdersCreated(year:number,month:number,tx :TransactionClient = prisma) {
 
-        return prisma.dashboardStats.upsert({
+        return tx.dashboardStats.upsert({
             where: {
                 year_month: {
                     year: year,
@@ -284,9 +284,9 @@ export const DashboardStatsService = {
         });
     },
 
-        async decrementOrdersCreated(year:number,month:number) {
+        async decrementOrdersCreated(year:number,month:number,tx :TransactionClient = prisma) {
 
-        return prisma.dashboardStats.update({
+        return tx.dashboardStats.update({
             where: {
                 year_month: {
                     year: year,

@@ -1,7 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { GlobalReview } from "../../../generated/prisma/client";
 import { prisma } from "../../../lib/prisma";
 import { User } from "../../../prisma/client";
+import { getMonthAndDate } from "../../utils/getMonthAndDate";
 import { QueryBuilder } from "../../utils/QueryBuilder";
+import { DashboardStatsService } from "../dashboardStats/dashboardStats.service";
 
 export const GlobalReviewsService = {
 
@@ -99,11 +102,17 @@ export const GlobalReviewsService = {
 
     async addGlobalReview(data: GlobalReview) {
 
-        const newReview = await prisma.globalReview.create({
-            data
-        });
+        return await prisma.$transaction(async (tx) => {
 
-        return newReview;
+            const newReview = await tx.globalReview.create({
+                data
+            });
+
+            const date = await getMonthAndDate(String(newReview.createdAt));
+            await DashboardStatsService.incrementGlobalReviewsCreated(date.year, date.month, tx);
+
+            return newReview;
+        })
     },
 
     async updateGlobalReview(id: string, data: Partial<GlobalReview>, user: User) {
@@ -136,27 +145,20 @@ export const GlobalReviewsService = {
 
     async deleteGlobalReview(id: string, user: User) {
 
-        const existingReview = await prisma.globalReview.findUnique({
-            where: { id }
-        });
+        // user.role = 'admin';
+        // const where = user.role === 'user' ? { id, user_id: user.id } : { id }  ;
 
-        if (!existingReview) {
-            throw new Error("Global review not found");
-        }
+        return await prisma.$transaction(async (tx) => {
 
-        if (user.role === 'admin') {
-
-            return await prisma.globalReview.delete({
-                where: { id }
+            const result = await tx.globalReview.delete({
+                where : {id}
             });
-        }
 
-        if (existingReview.user_id !== user.id) {
-            throw new Error("You are not authorized to delete this review");
-        }
+            const date = await getMonthAndDate(String(result.createdAt))
+            await DashboardStatsService.decrementGlobalReviewsCreated(date.year, date.month, tx);
 
-        return await prisma.globalReview.delete({
-            where: { id }
-        });
+            return result ;
+        })
     }
-};
+
+}

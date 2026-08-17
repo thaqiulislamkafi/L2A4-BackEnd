@@ -2,12 +2,9 @@
 import { z } from "zod";
 
 export const addReviewSchema = z.object({
-    meal_id: z.number("Meal ID is required")
-        .int("Meal ID must be an integer")
-        .positive("Meal ID must be positive"),
-
+    
+    meal_id: z.string("Meal ID is required"),
     user_id: z.string("User ID is required"),
-
     rating: z.number("Rating is required")
         .int("Rating must be an integer")
         .min(1, "Rating must be at least 1")
@@ -19,13 +16,9 @@ export const addReviewSchema = z.object({
 });
 
 export const updateReviewSchema = z.object({
-    meal_id: z.number()
-        .int("Meal ID must be an integer")
-        .positive("Meal ID must be positive")
-        .optional(),
 
+    meal_id: z.string("Meal ID is required"),
     user_id: z.string().optional(),
-
     rating: z.number()
         .int("Rating must be an integer")
         .min(1, "Rating must be at least 1")

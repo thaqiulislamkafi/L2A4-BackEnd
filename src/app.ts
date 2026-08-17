@@ -28,7 +28,7 @@ app.use('/api/meals',MealRoute) ;
 app.use('/api/orders',OrderRoute) ;
 app.use('/api/cart-items',CartItemRoute) ;
 app.use('/api/reviews',ReviewsRoute) ;
-app.use('api/global-reviews',GlobalReviewsRoute) ;
+app.use('/api/global-reviews',GlobalReviewsRoute) ;
 
 app.use('/api/auth',AuthRoute) ;
 

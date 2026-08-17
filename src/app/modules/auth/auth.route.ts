@@ -6,6 +6,9 @@ import { validate } from "../../middlewares/validate";
 
 export const AuthRoute = Router();
 
+AuthRoute.get('/',AuthController.getAllUsers) ;
+AuthRoute.get('/:id',AuthController.getUserById) ;
+
 AuthRoute.post('/sign-up',AuthController.SignUp) ;
 AuthRoute.post('/sign-in',validate(signinSchema),AuthController.SignIn) ;
 AuthRoute.post('/sign-out',AuthController.SignOut) ;

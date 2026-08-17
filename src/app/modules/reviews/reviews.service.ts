@@ -1,7 +1,10 @@
 import { Review } from "../../../generated/prisma/client"
 import { prisma } from "../../../lib/prisma"
 import { User } from "../../../prisma/client"
+import { getMonthAndDate } from "../../utils/getMonthAndDate"
 import { QueryBuilder } from "../../utils/QueryBuilder"
+import { DashboardStatsService } from "../dashboardStats/dashboardStats.service"
+import { MealAnalyticsService } from "../mealAnalytics/mealAnalytics.service"
 
 export const ReviewsService = {
 
@@ -112,17 +115,17 @@ export const ReviewsService = {
             }),
 
             await prisma.review.count({
-                where : prismaQuery.where
+                where: prismaQuery.where
             })
         ])
 
         return {
-            data : result,
-            meta : {
+            data: result,
+            meta: {
                 page,
                 limit,
                 total,
-                totalPage : Math.ceil(total / limit)
+                totalPage: Math.ceil(total / limit)
             }
         }
     },
@@ -144,10 +147,18 @@ export const ReviewsService = {
 
     async addReview(data: Review) {
 
-        const newReview = await prisma.review.create({
-            data: data
+        return await prisma.$transaction(async (tx) => {
+
+            const newReview = await tx.review.create({
+                data: data
+            });
+
+            await MealAnalyticsService.incrementReviewAnalyticsData(newReview.meal_id, tx);
+            const date = await getMonthAndDate(String(newReview.createdAt));
+            await DashboardStatsService.incrementReviewsCreated(date.year, date.month, tx);
+
+            return newReview;
         })
-        return newReview
     },
 
     async updateReview(id: string, data: Partial<Review>, user: User) {
@@ -174,21 +185,21 @@ export const ReviewsService = {
 
     async deleteReview(id: string, user: User) {
 
-        if (user.role === 'admin') {
-            return await prisma.review.delete({
-                where: {
-                    id: id
-                }
-            })
-        }
+        const where = user.role === 'admin' ? { id } : { id, user_id: user.id };
 
-        else {
-            return await prisma.review.delete({
-                where: {
-                    id,
-                    user_id: user.id
-                }
+        return await prisma.$transaction(async (tx) => {
+
+            const result = await tx.review.delete({
+                where: where
             })
-        }
+
+            await MealAnalyticsService.decrementReviewAnalyticsData(result.meal_id, tx);
+            const date = await getMonthAndDate(String(result.createdAt));
+            await DashboardStatsService.decrementReviewsCreated(date.year, date.month, tx);
+
+            return result ;
+        })
+
+
     }
 }

@@ -1,7 +1,10 @@
 import { Meal } from "../../../generated/prisma/client";
 import { prisma } from "../../../lib/prisma"
 import { User } from "../../../prisma/client";
+import { getMonthAndDate } from "../../utils/getMonthAndDate";
 import { QueryBuilder } from "../../utils/QueryBuilder";
+import { DashboardStatsService } from "../dashboardStats/dashboardStats.service";
+import { MealAnalyticsService } from "../mealAnalytics/mealAnalytics.service";
 
 export const MealService = {
 
@@ -107,10 +110,19 @@ export const MealService = {
     },
 
     async addMeal(data: Meal) {
-        const meal = await prisma.meal.create({
-            data: data
-        });
-        return meal;
+
+        return await prisma.$transaction(async (tx) => {
+
+            const meal = await tx.meal.create({
+                data: data
+            });
+
+            const date = await getMonthAndDate(String(meal.createdAt));
+            await DashboardStatsService.incrementMealsCreated(date.year, date.month, tx);
+            await MealAnalyticsService.addMealAnalyticsData(meal.id, meal.provider_id, tx);
+
+            return meal;
+        })
     },
 
     async updateMeal(id: string, data: Partial<Meal>, user: User) {
@@ -126,11 +138,11 @@ export const MealService = {
 
         else {
             return await prisma.meal.update({
-                where : {
-                    id ,
-                    provider_id : user.id
+                where: {
+                    id,
+                    provider_id: user.id
                 },
-                data : data
+                data: data
             })
         }
 
@@ -139,21 +151,30 @@ export const MealService = {
     async deleteMeal(id: string, user: User) {
 
         if (user.role === 'admin') {
-            return await prisma.meal.delete({
-                where: {
-                    id: id
-                }
+            return await prisma.$transaction(async (tx) => {
+
+                const result = await tx.meal.delete({
+                    where: {
+                        id: id
+                    }
+                })
+
+                const date = await getMonthAndDate(String(result.createdAt));
+                await DashboardStatsService.decrementMealsCreated(date.year, date.month,tx);
             })
         }
-        else {
-            return await prisma.meal.delete({
+        else if (user.role === 'user') {
+
+            const result = await prisma.meal.delete({
                 where: {
                     id,
                     provider_id: user.id
                 }
             })
-        }
 
+            const date = await getMonthAndDate(String(result.createdAt));
+            await DashboardStatsService.decrementMealsCreated(date.year, date.month);
+        }
 
     }
 }

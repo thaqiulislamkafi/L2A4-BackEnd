@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { GlobalReviewsService } from "./globalReviews.service";
 import { AuthRequest } from "../../types/AuthRequest.type";
-import { DashboardStatsService } from "../dashboardStats/dashboardStats.service";
 
 export const GlobalReviewsController = {
 
@@ -63,7 +62,6 @@ export const GlobalReviewsController = {
 
             const reviewData = req.body;
             const review = await GlobalReviewsService.addGlobalReview(reviewData);
-            await DashboardStatsService.incrementGlobalReviewsCreated() ;
 
             res.status(201).send({
                 success: true,
@@ -103,9 +101,8 @@ export const GlobalReviewsController = {
 
             const id = String(req.params.id);
 
-            if (!req.user) throw new Error("User not found");
+            // if (!req.user) throw new Error("User not found");
             const deletedReview = await GlobalReviewsService.deleteGlobalReview(id,req.user);
-            await DashboardStatsService.decrementGlobalReviewsCreated() ;
             
             res.status(200).send({
                 success: true,

@@ -6,6 +6,37 @@ import { AuthService } from "./auth.service";
 
 export const AuthController = {
 
+    async getAllUsers(req: AuthRequest, res: Response, next: NextFunction) {
+
+        try {
+            const result = await AuthService.getAllUsers(req.query);
+
+            res.status(200).json({
+                success: true,
+                message: 'Users data is successfully retreived',
+                ...result,
+            });
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    async getUserById(req: AuthRequest, res: Response, next: NextFunction) {
+
+        try {
+            const userId = req.params.id
+            const result = await AuthService.getUserById(String(userId));
+
+            res.status(200).json({
+                success: true,
+                message: 'User data is successfully retreived',
+                data : result,
+            });
+        } catch (error) {
+            next(error)
+        }
+    },
+
     async SignUp(req: AuthRequest, res: Response, next: NextFunction) {
 
         try {
@@ -52,7 +83,7 @@ export const AuthController = {
             next(error)
         }
     },
-    
+
     async changePassword(req: AuthRequest, res: Response, next: NextFunction) {
 
         try {
@@ -163,10 +194,10 @@ export const AuthController = {
         }
     },
 
-    async deleteUser(req: AuthRequest, res: Response, next: NextFunction){
+    async deleteUser(req: AuthRequest, res: Response, next: NextFunction) {
 
         try {
-            const user_id = req.params.id ;
+            const user_id = req.params.id;
             const result = await AuthService.deleteUser(String(user_id));
 
             return res.status(200).json({
@@ -179,9 +210,9 @@ export const AuthController = {
         }
     },
 
-    async deleteAllUsers(req: AuthRequest, res: Response, next: NextFunction){
+    async deleteAllUsers(req: AuthRequest, res: Response, next: NextFunction) {
 
-         try {
+        try {
             const result = await AuthService.deleteAllUsers();
 
             return res.status(200).json({
