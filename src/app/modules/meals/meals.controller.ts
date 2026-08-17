@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import { MealService } from "./meals.service";
 import { AuthRequest } from "../../types/AuthRequest.type";
 import { DashboardStatsService } from "../dashboardStats/dashboardStats.service";
+import { MealAnalyticsService } from "../mealAnalytics/mealAnalytics.service";
+import { getMonthAndDate } from "../../utils/getMonthAndDate";
 
 export const MealController = {
 
@@ -57,7 +59,10 @@ export const MealController = {
         try {
             const mealData = req.body;
             const meal = await MealService.addMeal(mealData);
-            await DashboardStatsService.incrementMealsCreated();
+
+            const date = await getMonthAndDate(String(meal.createdAt)) ;
+            await DashboardStatsService.incrementMealsCreated(date.year,date.month);
+            await MealAnalyticsService.addMealAnalyticsData(meal.id,meal.provider_id) ;
 
             res.status(201).send({
                 success : true,
@@ -121,6 +126,9 @@ export const MealController = {
 
             if(!req.user) throw new Error('User not found')
             const deletedMeal = await MealService.deleteMeal(id,req.user);
+
+            const date = await getMonthAndDate(String(deletedMeal.createdAt)) ;
+            await DashboardStatsService.decrementMealsCreated(date.year,date.month) ;
             
             res.status(200).send({
                 success : true,

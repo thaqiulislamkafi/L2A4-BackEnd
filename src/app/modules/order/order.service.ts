@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { prisma } from "../../../lib/prisma"
+import { getMonthAndDate } from "../../utils/getMonthAndDate";
+import { DashboardStatsService } from "../dashboardStats/dashboardStats.service";
 import { OrderItemsService } from "../orderItems/orderItems.service";
 
 export const OrderService = {
@@ -34,6 +36,9 @@ export const OrderService = {
             }
         });
 
+        const date = await getMonthAndDate(String(order.createdAt)) ;
+        await DashboardStatsService.incrementOrdersCreated(date.year,date.month) ;
+
         return { order, orderItems };
     },
 
@@ -66,6 +71,9 @@ export const OrderService = {
                 status: 'CANCELLED'
             }
         });
+
+        const date = await getMonthAndDate(String(cancelledOrder.createdAt));
+        await DashboardStatsService.decrementOrdersCreated(date.year,date.month) ;
 
         return cancelledOrder;
     }

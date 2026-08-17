@@ -1,5 +1,5 @@
 model Meal {
-  id                 String      @id @default(uuid())
+  id                 String          @id @default(uuid())
   name               String
   image              String?
   description        String
@@ -7,16 +7,19 @@ model Meal {
   dietry_type        String
   category           String
   availabilty_status String
-  price              Int
-  isHeroContent      Boolean     @default(false)
-  isSliderContent    Boolean     @default(false)
+  pricePerPiece      Int
+  totalPieces        Int
+  availablePieces    Int
+  isPublished        Boolean         @default(true)
+  isHeroContent      Boolean         @default(false)
+  isSliderContent    Boolean         @default(false)
   provider_id        String
-  provider           User        @relation(fields: [provider_id], references: [id], onDelete: Cascade)
-  createdAt          DateTime    @default(now())
-  updatedAt          DateTime    @updatedAt
-  category_rel       Categories  @relation(fields: [category], references: [id])
-  cuisine_rel        Cuisinetype @relation(fields: [cuisine_type], references: [id])
-  dietry_rel         Dietrytype  @relation(fields: [dietry_type], references: [id])
+  provider           User            @relation(fields: [provider_id], references: [id], onDelete: Cascade)
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+  category_rel       Categories      @relation(fields: [category], references: [id])
+  cuisine_rel        Cuisinetype     @relation(fields: [cuisine_type], references: [id])
+  dietry_rel         Dietrytype      @relation(fields: [dietry_type], references: [id])
   reviews            Review[]
   cartItems          CartItem[]
   orderItems         OrderItem[]

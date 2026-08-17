@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { ReviewsService } from "./reviews.service";
 import { AuthRequest } from "../../types/AuthRequest.type";
+import { MealAnalyticsService } from "../mealAnalytics/mealAnalytics.service";
+import { DashboardStatsService } from "../dashboardStats/dashboardStats.service";
+import { getMonthAndDate } from "../../utils/getMonthAndDate";
 
 export const ReviewsController = {
 
@@ -68,7 +71,12 @@ export const ReviewsController = {
 
         try {
             const reviewData = req.body;
-            const review = await ReviewsService.addReview(reviewData);
+            const review = await ReviewsService.addReview(reviewData) ;
+            await MealAnalyticsService.incrementReviewAnalyticsData(review.meal_id) ;
+
+            const date = await getMonthAndDate(String(review.createdAt));
+            await DashboardStatsService.incrementMealsCreated(date.year,date.month) ;
+
             res.status(201).send({
                 success: true,
                 message: "Review added successfully",
@@ -106,7 +114,12 @@ export const ReviewsController = {
             const id = String(req.params.id);
             if (!req.user) throw new Error('User not found');
 
-            const deletedReview = await ReviewsService.deleteReview(id, req.user);
+            const deletedReview = await ReviewsService.deleteReview(id, req.user) ;
+            await MealAnalyticsService.decrementReviewAnalyticsData(deletedReview.meal_id) ;
+
+            const date = await getMonthAndDate(String(deletedReview.createdAt)) ;
+            await DashboardStatsService.decrementReviewsCreated(date.year,date.month) ;
+
             res.status(200).send({
                 success: true,
                 message: "Review deleted successfully",

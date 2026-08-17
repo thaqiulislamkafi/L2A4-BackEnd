@@ -64,19 +64,18 @@ export const DashboardStatsService = {
         });
     },
 
-    async incrementUsersJoined() {
-        const now = new Date();
+    async incrementUsersJoined(year:number,month:number) {
 
         return prisma.dashboardStats.upsert({
             where: {
                 year_month: {
-                    year: now.getFullYear(),
-                    month: now.getMonth() + 1,
+                    year: year,
+                    month: month,
                 },
             },
             create: {
-                year: now.getFullYear(),
-                month: now.getMonth() + 1,
+                year: year,
+                month: month,
                 usersJoined: 1,
             },
             update: {
@@ -104,20 +103,18 @@ export const DashboardStatsService = {
         });
     },
 
-    async incrementProvidersJoined() {
-
-        const now = new Date();
+    async incrementProvidersJoined(year:number,month:number) {
 
         return prisma.dashboardStats.upsert({
             where: {
                 year_month: {
-                    year: now.getFullYear(),
-                    month: now.getMonth() + 1,
+                    year: year,
+                    month: month,
                 },
             },
             create: {
-                year: now.getFullYear(),
-                month: now.getMonth() + 1,
+                year: year,
+                month: month,
                 providersJoined: 1,
             },
             update: {
@@ -145,20 +142,18 @@ export const DashboardStatsService = {
         });
     },
 
-    async incrementMealsCreated() {
-
-        const now = new Date();
+    async incrementMealsCreated(year:number,month:number) {
 
         return prisma.dashboardStats.upsert({
             where: {
                 year_month: {
-                    year: now.getFullYear(),
-                    month: now.getMonth() + 1,
+                    year: year,
+                    month: month,
                 },
             },
             create: {
-                year: now.getFullYear(),
-                month: now.getMonth() + 1,
+                year: year,
+                month: month,
                 mealsCreated: 1,
             },
             update: {
@@ -186,20 +181,18 @@ export const DashboardStatsService = {
         });
     },
 
-    async incrementReviewsCreated() {
-
-        const now = new Date();
+    async incrementReviewsCreated(year:number,month:number) {
 
         return prisma.dashboardStats.upsert({
             where: {
                 year_month: {
-                    year: now.getFullYear(),
-                    month: now.getMonth() + 1,
+                    year: year,
+                    month: month,
                 },
             },
             create: {
-                year: now.getFullYear(),
-                month: now.getMonth() + 1,
+                year: year,
+                month: month,
                 reviewsCreated: 1,
             },
             update: {
@@ -227,20 +220,18 @@ export const DashboardStatsService = {
         });
     },
 
-    async incrementGlobalReviewsCreated() {
-
-        const now = new Date();
+    async incrementGlobalReviewsCreated(year:number,month:number) {
 
         return prisma.dashboardStats.upsert({
             where: {
                 year_month: {
-                    year: now.getFullYear(),
-                    month: now.getMonth() + 1,
+                    year: year,
+                    month: month,
                 },
             },
             create: {
-                year: now.getFullYear(),
-                month: now.getMonth() + 1,
+                year: year,
+                month: month,
                 globalReviewsCreated: 1,
             },
             update: {
@@ -268,19 +259,18 @@ export const DashboardStatsService = {
         });
     },
 
-    async incrementOrdersCreated() {
-        const now = new Date();
+    async incrementOrdersCreated(year:number,month:number) {
 
         return prisma.dashboardStats.upsert({
             where: {
                 year_month: {
-                    year: now.getFullYear(),
-                    month: now.getMonth() + 1,
+                    year: year,
+                    month: month ,
                 },
             },
             create: {
-                year: now.getFullYear(),
-                month: now.getMonth() + 1,
+                year: year,
+                month: month,
                 ordersCreated: 1,
             },
             update: {
