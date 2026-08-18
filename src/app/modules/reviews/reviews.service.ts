@@ -163,24 +163,13 @@ export const ReviewsService = {
 
     async updateReview(id: string, data: Partial<Review>, user: Partial<User>) {
 
-        if (user.role === 'admin') {
-            return await prisma.review.update({
-                where: {
-                    id: id
-                },
-                data: data
-            })
-        }
+        const where = user.role === 'admin' ? { id } : { id, user_id: user.id };
+        
+        return await prisma.review.update({
+            where: where,
+            data: data
+        })
 
-        else {
-            return await prisma.review.update({
-                where: {
-                    id,
-                    user_id: user.id
-                },
-                data
-            })
-        }
     },
 
     async deleteReview(id: string, user: Partial<User>) {
@@ -197,7 +186,7 @@ export const ReviewsService = {
             const date = await getMonthAndDate(String(result.createdAt));
             await DashboardStatsService.decrementReviewsCreated(date.year, date.month, tx);
 
-            return result ;
+            return result;
         })
 
 

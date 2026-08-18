@@ -108,7 +108,7 @@ export const MealService = {
             }
         })
         return meal
-        return meal ;
+        return meal;
     },
 
     async addMeal(data: Meal) {
@@ -129,86 +129,60 @@ export const MealService = {
 
     async updateMeal(id: string, data: Partial<Meal>, user: User) {
 
-        if (user.role === 'admin') {
-            return await prisma.meal.update({
-                where: {
-                    id: id
-                },
-                data: data
-            })
-        }
+        const where = user.role === 'admin' ? { id } : { id, user_id: user.id };
 
-        else {
-            return await prisma.meal.update({
-                where: {
-                    id,
-                    provider_id: user.id
-                },
-                data: data
-            })
-        }
+        return await prisma.meal.update({
+            where: where,
+            data: data
+        })
 
     },
 
     async deleteMeal(id: string, user: User) {
 
-        if (user.role === 'admin') {
-            return await prisma.$transaction(async (tx) => {
+        const where = user.role === 'admin' ? { id } : { id, user_id: user.id };
 
-                const result = await tx.meal.delete({
-                    where: {
-                        id: id
-                    }
-                })
+        return await prisma.$transaction(async (tx) => {
 
-                const date = await getMonthAndDate(String(result.createdAt));
-                await DashboardStatsService.decrementMealsCreated(date.year, date.month,tx);
-            })
-        }
-        else if (user.role === 'user') {
-
-            const result = await prisma.meal.delete({
-                where: {
-                    id,
-                    provider_id: user.id
-                }
+            const result = await tx.meal.delete({
+                where: where
             })
 
             const date = await getMonthAndDate(String(result.createdAt));
-            await DashboardStatsService.decrementMealsCreated(date.year, date.month);
-        }
+            await DashboardStatsService.decrementMealsCreated(date.year, date.month, tx);
+        })
 
     },
 
-    async incrementMealQuantity(mealId:string,quantity:number,tx : TransactionClient = prisma) {
+    async incrementMealQuantity(mealId: string, quantity: number, tx: TransactionClient = prisma) {
 
         const result = await tx.meal.update({
-            where : {
-                id : mealId
+            where: {
+                id: mealId
             },
-            data : {
-                totalPieces : {
-                    increment : quantity
+            data: {
+                totalPieces: {
+                    increment: quantity
                 }
             }
-        }) ;
+        });
 
-        return result ;
+        return result;
     },
 
-    async decrementMealQuantity(mealId:string,quantity:number,tx : TransactionClient = prisma) {
+    async decrementMealQuantity(mealId: string, quantity: number, tx: TransactionClient = prisma) {
 
         const result = await tx.meal.update({
-            where : {
-                id : mealId
+            where: {
+                id: mealId
             },
-            data : {
-                totalPieces : {
-                    decrement : quantity
+            data: {
+                totalPieces: {
+                    decrement: quantity
                 }
             }
-        }) ;
+        });
 
-        return result ;
+        return result;
     }
 }

@@ -117,46 +117,29 @@ export const GlobalReviewsService = {
 
     async updateGlobalReview(id: string, data: Partial<GlobalReview>, user: User) {
 
-        const existingReview = await prisma.globalReview.findUnique({
-            where: { id }
-        });
-
-        if (!existingReview) {
-            throw new Error("Global review not found");
-        }
-
-        if (user.role === 'admin') {
-
-            return await prisma.globalReview.update({
-                where: { id },
-                data
-            });
-        }
-
-        if (existingReview.user_id !== user.id) {
-            throw new Error("You are not authorized to update this review");
-        }
+        const where = user.role === 'admin' ? { id } : { id, user_id: user.id };
 
         return await prisma.globalReview.update({
-            where: { id },
+            where: where,
             data
         });
+
     },
 
     async deleteGlobalReview(id: string, user: User) {
 
-        const where = user.role === 'user' ? { id, user_id: user.id } : { id }  ;
+        const where = user.role === 'user' ? { id, user_id: user.id } : { id };
 
         return await prisma.$transaction(async (tx) => {
 
             const result = await tx.globalReview.delete({
-                where : where
+                where: where
             });
 
             const date = await getMonthAndDate(String(result.createdAt))
             await DashboardStatsService.decrementGlobalReviewsCreated(date.year, date.month, tx);
 
-            return result ;
+            return result;
         })
     }
 
