@@ -1,20 +1,25 @@
 model User {
-  id            String    @id
+  id            String         @id
   name          String
   email         String
-  emailVerified Boolean   @default(false)
+  emailVerified Boolean        @default(false)
   image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
   sessions      Session[]
   accounts      Account[]
-
-  role    String?  @default("user")
-  status  String?  @default("active")
-  meals   Meal[]
-  reviews Review[]
-  carts   Cart[]
-  orders  Order[]
+  contact       String         @default("")
+  age           Int?
+  address       String?
+  role          UserRole       @default(user)
+  status        UserStatus     @default(active)
+  meals         Meal[]
+  reviews       Review[]
+  carts         Cart[]
+  orders        Order[]
+  GlobalReviews GlobalReview[]
+  mealAnalytics MealAnalytics[]
+  cartItems     CartItem[]
 
   @@unique([email])
   @@map("user")

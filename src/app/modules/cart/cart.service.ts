@@ -1,19 +1,31 @@
 import { Cart } from "../../../generated/prisma/client"
 import { prisma } from "../../../lib/prisma"
+import { TransactionClient } from "../../types/transactionClient.type"
 
 export const CartService = {
 
-    async getCartById(id: number) {
-        const cart = await prisma.cart.findUnique({
-            where: { id }
+    async getAllCarts(){
+
+        const carts = await prisma.cart.findMany() ;
+        return carts ;
+        
+    },
+
+    async getCartById(id: string, tx: TransactionClient = prisma) {
+
+        const cart = await tx.cart.findUnique({
+            where: { id },
+            include :{
+                cartItems : true
+            }
         })
 
         return cart
     },
 
-    async addCart(userId: string) {
+    async addCart(userId: string, tx : TransactionClient = prisma) {
 
-        const existCart = await prisma.cart.findUnique({
+        const existCart = await tx.cart.findUnique({
            where : {
             user_id : userId
            }
@@ -23,14 +35,14 @@ export const CartService = {
             return existCart;
         }
 
-        const cart = await prisma.cart.create({
+        const cart = await tx.cart.create({
             data: {
                 user_id: userId
         }})
         return cart;
     },
 
-    async updateCart(id: number, data: Partial<Cart>) {
+    async updateCart(id: string, data: Partial<Cart>) {
 
         const cart = await prisma.cart.update({
             where: { id },
@@ -39,7 +51,7 @@ export const CartService = {
         return cart;
     },
 
-    async deleteCart(id: number) {
+    async deleteCart(id: string) {
         const cart = await prisma.cart.delete({
             where: { id }
         })

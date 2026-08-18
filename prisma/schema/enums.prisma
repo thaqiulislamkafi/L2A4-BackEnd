@@ -1,0 +1,19 @@
+
+enum UserStatus {
+    active
+    banned
+    inactive
+}
+
+enum UserRole {
+    user
+    admin
+    provider
+}
+
+enum SettingType {
+  STRING 
+  BOOLEAN
+  NUMBER
+  JSON
+}
