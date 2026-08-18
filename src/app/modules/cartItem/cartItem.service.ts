@@ -1,21 +1,42 @@
-import { Cart, CartItem } from "../../../generated/prisma/client";
+import {  CartItem } from "../../../generated/prisma/client";
 import { prisma } from "../../../lib/prisma";
-import { CartService } from "../cart/cart.service";
 
 export const CartItemService = {
 
+    async getCartItemById(id:string){
+
+        const cartItems = await prisma.cartItem.findUnique({
+            where : {
+                id
+            }
+        }) ;
+
+        return cartItems
+    },
+
+    async getCartItemByCartId(cartId:string){
+
+        const cartItems = await prisma.cartItem.findMany({
+            where : {
+                cart_id : cartId
+            }
+        }) ;
+
+        return cartItems
+    },
+
     async getCartItemByUserId(userId: string) {
 
-        const cart:Cart = await CartService.addCart(userId) as Cart;
-
-        const cartItem = await prisma.cartItem.findMany({
-            where: { cart_id : cart.id }
+        const cartItems = await prisma.cartItem.findMany({
+            where: { 
+                user_id : userId 
+            }
         })
-        return cartItem;
+        return cartItems;
     },
 
     async addCartItem(data: CartItem) {
-        
+
         const cartItem = await prisma.cartItem.create({
             data: data
         })
@@ -23,6 +44,7 @@ export const CartItemService = {
     },
 
     async deleteCartItem(id: string) {
+
         const cartItem = await prisma.cartItem.delete({
             where: { id }
         })

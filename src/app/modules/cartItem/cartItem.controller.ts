@@ -3,47 +3,79 @@ import { CartItemService } from "./cartItem.service";
 
 export const CartItemController = {
 
-    async getCartItemByUserId(req:Request, res:Response,next:NextFunction) {
+    async getCartItemById(req: Request, res: Response, next: NextFunction) {
 
         try {
-            const userId:string = String(req.params.id);
-            const cartItem = await CartItemService.getCartItemByUserId(userId);
+            const id: string = String(req.params.id);
+            const cartItem = await CartItemService.getCartItemById(id);
 
             res.status(200).send({
-                success : true,
-                message : "Cart item fetched successfully",
-                data : cartItem
+                success: true,
+                message: "Cart item fetched successfully by Cart Id",
+                data: cartItem
             });
         } catch (error) {
             next(error);
         }
     },
 
-    async addCartItem(req:Request, res:Response,next:NextFunction) {
+    async getCartItemByCartId(req: Request, res: Response, next: NextFunction) {
 
         try {
-            const data = req.body;
-            const cartItem = await CartItemService.addCartItem(data);
-            res.status(201).send({
-                success : true,
-                message : "Cart item added successfully",
-                data : cartItem
-                });
+            const cartId: string = String(req.params.cartId);
+            const cartItems = await CartItemService.getCartItemByCartId(cartId);
+
+            res.status(200).send({
+                success: true,
+                message: "Cart item fetched successfully by Cart Id",
+                data: cartItems
+            });
         } catch (error) {
             next(error);
         }
     },
 
-    async deleteCartItem(req:Request, res:Response,next:NextFunction) {
+    async getCartItemByUserId(req: Request, res: Response, next: NextFunction) {
+
+        try {
+            const userId: string = String(req.params.userId);
+            const cartItem = await CartItemService.getCartItemByUserId(userId);
+
+            res.status(200).send({
+                success: true,
+                message: "Cart item fetched successfully by User Id",
+                data: cartItem
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    async addCartItem(req: Request, res: Response, next: NextFunction) {
+
+        try {
+            const data = req.body;
+            const cartItem = await CartItemService.addCartItem(data);
+            res.status(201).send({
+                success: true,
+                message: "Cart item added successfully",
+                data: cartItem
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    async deleteCartItem(req: Request, res: Response, next: NextFunction) {
 
         try {
             const id = String(req.params.id);
             const cartItem = await CartItemService.deleteCartItem(id);
-            res.status(200).send({         
-                success : true,
-                message : "Cart item deleted successfully",
-                data : cartItem
-                });
+            res.status(200).send({
+                success: true,
+                message: "Cart item deleted successfully",
+                data: cartItem
+            });
         } catch (error) {
             next(error);
         }

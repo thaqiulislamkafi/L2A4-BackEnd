@@ -145,13 +145,12 @@ export const GlobalReviewsService = {
 
     async deleteGlobalReview(id: string, user: User) {
 
-        // user.role = 'admin';
-        // const where = user.role === 'user' ? { id, user_id: user.id } : { id }  ;
+        const where = user.role === 'user' ? { id, user_id: user.id } : { id }  ;
 
         return await prisma.$transaction(async (tx) => {
 
             const result = await tx.globalReview.delete({
-                where : {id}
+                where : where
             });
 
             const date = await getMonthAndDate(String(result.createdAt))
