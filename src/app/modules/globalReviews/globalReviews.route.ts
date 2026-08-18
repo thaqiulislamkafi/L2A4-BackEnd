@@ -2,6 +2,7 @@ import { Router } from "express";
 import { GlobalReviewsController } from "./globalReviews.controller";
 import { validate } from "../../middlewares/validate";
 import { addGlobalReviewSchema, updateGlobalReviewSchema } from "./globalReviews.schema";
+import { verifyAuth } from "../../middlewares/verifyAuth";
 
 export const GlobalReviewsRoute = Router();
 
@@ -10,5 +11,5 @@ GlobalReviewsRoute.get("/user/:user_id", GlobalReviewsController.getGlobalReview
 GlobalReviewsRoute.get("/:id", GlobalReviewsController.getGlobalReviewById);
 GlobalReviewsRoute.post("/",validate(addGlobalReviewSchema), GlobalReviewsController.addGlobalReview);
 
-GlobalReviewsRoute.put("/:id",validate(updateGlobalReviewSchema), GlobalReviewsController.updateGlobalReview);
-GlobalReviewsRoute.delete("/:id", GlobalReviewsController.deleteGlobalReview);
+GlobalReviewsRoute.put("/:id",validate(updateGlobalReviewSchema),verifyAuth, GlobalReviewsController.updateGlobalReview);
+GlobalReviewsRoute.delete("/:id",verifyAuth, GlobalReviewsController.deleteGlobalReview);

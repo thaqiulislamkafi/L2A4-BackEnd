@@ -3,7 +3,6 @@
 import { z } from "zod";
 
 export const addGlobalReviewSchema = z.object({
-    user_id: z.string("User ID is required"),
 
     rating: z.number("Rating is required")
         .int("Rating must be an integer")
@@ -16,7 +15,6 @@ export const addGlobalReviewSchema = z.object({
 });
 
 export const updateGlobalReviewSchema = z.object({
-    user_id: z.string().optional(),
 
     rating: z.number()
         .int("Rating must be an integer")

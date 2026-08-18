@@ -4,6 +4,13 @@ import { TransactionClient } from "../../types/transactionClient.type"
 
 export const CartService = {
 
+    async getAllCarts(){
+
+        const carts = await prisma.cart.findMany() ;
+        return carts ;
+        
+    },
+
     async getCartById(id: string) {
         const cart = await prisma.cart.findUnique({
             where: { id }

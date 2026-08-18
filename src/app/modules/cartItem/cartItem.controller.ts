@@ -23,8 +23,7 @@ export const CartItemController = {
 
         try {
             const data = req.body;
-            const userId = req.query.userId as string;
-            const cartItem = await CartItemService.addCartItem(data,userId);
+            const cartItem = await CartItemService.addCartItem(data);
             res.status(201).send({
                 success : true,
                 message : "Cart item added successfully",

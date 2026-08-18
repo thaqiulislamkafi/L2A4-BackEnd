@@ -105,7 +105,7 @@ export const ReviewsController = {
         try {
 
             const id = String(req.params.id);
-            // if (!req.user) throw new Error('User not found');
+            if (!req.user) throw new Error('User not found');
 
             const deletedReview = await ReviewsService.deleteReview(id, req.user) ;
 

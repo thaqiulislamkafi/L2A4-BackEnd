@@ -14,11 +14,8 @@ export const CartItemService = {
         return cartItem;
     },
 
-    async addCartItem(data: CartItem,userId:string) {
-
-        const cart:Cart = await CartService.addCart(userId) as Cart;
-        data.cart_id = cart.id;
-
+    async addCartItem(data: CartItem) {
+        
         const cartItem = await prisma.cartItem.create({
             data: data
         })

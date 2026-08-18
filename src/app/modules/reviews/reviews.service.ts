@@ -161,7 +161,7 @@ export const ReviewsService = {
         })
     },
 
-    async updateReview(id: string, data: Partial<Review>, user: User) {
+    async updateReview(id: string, data: Partial<Review>, user: Partial<User>) {
 
         if (user.role === 'admin') {
             return await prisma.review.update({
@@ -183,7 +183,7 @@ export const ReviewsService = {
         }
     },
 
-    async deleteReview(id: string, user: User) {
+    async deleteReview(id: string, user: Partial<User>) {
 
         const where = user.role === 'admin' ? { id } : { id, user_id: user.id };
 

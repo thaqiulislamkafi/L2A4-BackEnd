@@ -11,6 +11,7 @@ import { GlobalHandleError } from "./app/middlewares/globalHandleError";
 import { ReviewsRoute } from "./app/modules/reviews/reviews.route";
 import { GlobalReviewsRoute } from "./app/modules/globalReviews/globalReviews.route";
 import { AuthRoute } from "./app/modules/auth/auth.route";
+import { CartRoute } from "./app/modules/cart/cart.route";
 
 export const app = express() ;
 app.use(cors()) ;
@@ -26,6 +27,8 @@ app.use('/api/dietry-types',DietryTypeRoute) ;
 
 app.use('/api/meals',MealRoute) ;
 app.use('/api/orders',OrderRoute) ;
+
+app.use('/api/carts',CartRoute) ;
 app.use('/api/cart-items',CartItemRoute) ;
 app.use('/api/reviews',ReviewsRoute) ;
 app.use('/api/global-reviews',GlobalReviewsRoute) ;

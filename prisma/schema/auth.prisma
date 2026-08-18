@@ -19,6 +19,7 @@ model User {
   orders        Order[]
   GlobalReviews GlobalReview[]
   mealAnalytics MealAnalytics[]
+  cartItems     CartItem[]
 
   @@unique([email])
   @@map("user")
