@@ -1,22 +1,24 @@
 model Cart {
-  id        Int      @id @default(autoincrement())
-  user_id   String   @unique
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-
+  id        String     @id @default(uuid())
+  user_id   String     @unique
+  user      User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
   cartItems CartItem[]
 }
 
 model CartItem {
-  id        Int      @id @default(autoincrement())
-  cart_id   Int
-  meal_id   Int
+  id        String   @id @default(uuid())
+  cart_id   String
+  user_id   String
+  meal_id   String
   quantity  Int      @default(1)
   price     Int
+  cart      Cart     @relation(fields: [cart_id], references: [id], onDelete: Cascade)
+  meal      Meal     @relation(fields: [meal_id], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [user_id], references: [id])
   createdAt DateTime @default(now())
-
-  cart Cart @relation(fields: [cart_id], references: [id], onDelete: Cascade)
-  meal Meal @relation(fields: [meal_id], references: [id], onDelete: Cascade)
+  updatedAt DateTime @updatedAt
 
   @@unique([cart_id, meal_id])
 }

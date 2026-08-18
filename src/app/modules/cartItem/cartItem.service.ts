@@ -1,23 +1,64 @@
-import { Cart, CartItem } from "../../../generated/prisma/client";
+import {  CartItem } from "../../../generated/prisma/client";
 import { prisma } from "../../../lib/prisma";
-import { CartService } from "../cart/cart.service";
+import { TransactionClient } from "../../types/transactionClient.type";
 
 export const CartItemService = {
 
-    async getCartItemByUserId(userId: string) {
+    async getCartItemById(id:string){
 
-        const cart:Cart = await CartService.addCart(userId) as Cart;
+        const cartItems = await prisma.cartItem.findUnique({
+            where : {
+                id
+            }
+        }) ;
 
-        const cartItem = await prisma.cartItem.findMany({
-            where: { cart_id : cart.id }
-        })
-        return cartItem;
+        return cartItems
     },
 
-    async addCartItem(data: CartItem,userId:string) {
+    async getCartItemByCartId(cartId:string){
 
-        const cart:Cart = await CartService.addCart(userId) as Cart;
-        data.cart_id = cart.id;
+        const cartItems = await prisma.cartItem.findMany({
+            where : {
+                cart_id : cartId
+            },
+            include : {
+                meal : {
+                    select : {
+                        id :true,
+                        name : true,
+                        image : true,
+                        pricePerPiece : true,
+                        availablePieces : true
+                    }
+                }
+            }
+        }) ;
+
+        return cartItems
+    },
+
+    async getCartItemByUserId(userId: string, tx: TransactionClient = prisma) {
+
+        const cartItems = await tx.cartItem.findMany({
+            where: { 
+                user_id : userId 
+            },
+            include : {
+                meal : {
+                    select : {
+                        id :true,
+                        name : true,
+                        image : true,
+                        pricePerPiece : true,
+                        availablePieces : true
+                    }
+                }
+            }
+        })
+        return cartItems;
+    },
+
+    async addCartItem(data: CartItem) {
 
         const cartItem = await prisma.cartItem.create({
             data: data
@@ -25,10 +66,22 @@ export const CartItemService = {
         return cartItem;
     },
 
-    async deleteCartItem(id: number) {
+    async deleteCartItem(id: string) {
+
         const cartItem = await prisma.cartItem.delete({
             where: { id }
         })
         return cartItem;
+    },
+
+    async deleteCartItems(cartId:string,tx : TransactionClient = prisma){
+
+        const cartItems = await tx.cartItem.deleteMany({
+            where : {
+                cart_id : cartId
+            }
+        })
+
+        return cartItems ;
     }
 }
