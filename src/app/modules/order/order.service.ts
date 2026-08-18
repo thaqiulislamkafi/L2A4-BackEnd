@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { prisma } from "../../../lib/prisma"
+import { OrderStatus } from "../../../prisma/enums";
+import { TransactionClient } from "../../types/transactionClient.type";
 import { getMonthAndDate } from "../../utils/getMonthAndDate";
 import { QueryBuilder } from "../../utils/QueryBuilder";
+import { CartItemService } from "../cartItem/cartItem.service";
 import { DashboardStatsService } from "../dashboardStats/dashboardStats.service";
 import { OrderItemsService } from "../orderItems/orderItems.service";
 
@@ -129,9 +132,9 @@ export const OrderService = {
         }
     },
 
-    async getOrderById(id: string) {
+    async getOrderById(id: string, tx: TransactionClient = prisma) {
 
-        const order = await prisma.order.findUnique({
+        const order = await tx.order.findUnique({
             where: {
                 id
             },
@@ -159,99 +162,100 @@ export const OrderService = {
                 }
 
             }
-        }) ;
+        });
 
-        return order ;
+        return order;
     },
 
-    async addOrder(data: any, userId: string) {
+    async addOrder(userId: string) {
 
-        const cart = await prisma.cart.findFirst({
-            where: {
-                user_id: userId
-            },
-            include: {
-                cartItems: true
+        return prisma.$transaction(async (tx) => {
+
+            const cartItems = await CartItemService.getCartItemByUserId(userId, tx);
+
+            if (cartItems.length === 0) {
+                throw new Error("Cart is empty");
             }
-        });
 
-        if (!cart || cart.cartItems.length === 0) {
-            throw new Error("Cart is empty or does not exist");
-        }
+            const order = await tx.order.create({
+                data: {
+                    user_id: userId,
+                    total_price: cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
+                }
+            });
 
-        const order = await prisma.order.create({
-            data: {
-                user_id: userId,
-                total_price: cart.cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
-            }
-        });
+            const orderItems = await OrderItemsService.addOrderItems(cartItems, order.id, tx);
 
-        const orderItems = await OrderItemsService.addOrderItems(cart.cartItems, order.id);
+            await CartItemService.deleteCartItems(cartItems[0].cart_id, tx);
 
-        await prisma.cartItem.deleteMany({
-            where: {
-                cart_id: cart.id
-            }
-        });
+            const date = await getMonthAndDate(String(order.createdAt));
+            await DashboardStatsService.incrementOrdersCreated(date.year, date.month, tx);
 
-        const date = await getMonthAndDate(String(order.createdAt));
-        await DashboardStatsService.incrementOrdersCreated(date.year, date.month);
-
-        return { order, orderItems };
+            return { order, orderItems };
+        })
     },
 
-    async cancelOrder(orderId: string, userId: string) {
+    async cancelOrder(orderId: string) {
 
-        const order = await prisma.order.findFirst({
-            where: {
-                id: orderId,
-                user_id: userId
+        return prisma.$transaction(async (tx) => {
+
+            const order = await this.getOrderById(orderId,tx);
+
+            if (!order) {
+                throw new Error("Order not found");
             }
-        });
 
-        if (!order) {
-            throw new Error("Order not found");
-        }
+            if (order.status === 'CANCELLED') {
+                throw new Error("Order is already cancelled");
+            }
 
-        if (order.status === 'CANCELLED') {
-            throw new Error("Order is already cancelled");
-        }
+            else if (order.status === 'PROCESSING') {
+                throw new Error("Processing orders cannot be cancelled");
+            }
 
-        else if (order.status === 'PROCESSING') {
-            throw new Error("Approved orders cannot be cancelled");
-        }
+            const cancelledOrder = await this.updateOrderStatus(order.id, 'CANCELLED',tx);
+            const cancelledOrderItems = await OrderItemsService.cancelOrderItems(cancelledOrder.id,tx) ;
 
-        const cancelledOrder = await prisma.order.update({
+            const date = await getMonthAndDate(String(cancelledOrder.createdAt));
+            await DashboardStatsService.decrementOrdersCreated(date.year, date.month,tx);
+
+            return {
+                cancelledOrder,
+                cancelledOrderItems
+            };
+        })
+    },
+
+    async updateOrderStatus(orderId: string, status: OrderStatus, tx: TransactionClient = prisma) {
+
+        const result = await tx.order.update({
             where: {
                 id: orderId
             },
             data: {
-                status: 'CANCELLED'
+                status: status
             }
         });
 
-        const date = await getMonthAndDate(String(cancelledOrder.createdAt));
-        await DashboardStatsService.decrementOrdersCreated(date.year, date.month);
-
-        return cancelledOrder;
+        return result;
     },
 
-    async deleteOrder(id:string){
+    async deleteOrder(id: string) {
 
         const order = await prisma.order.findUnique({
-            where : {
+            where: {
                 id
             }
-        }) ;
+        });
 
-        if(order?.status !== 'CANCELLED'){
+        if (order?.status !== 'CANCELLED') {
             throw new Error('This order is not Cancelled,Only cancelled order can be deleted');
         }
 
         return await prisma.order.delete({
-            where : {
+            where: {
                 id,
-                status : 'CANCELLED'
+                status: 'CANCELLED'
             }
         })
     }

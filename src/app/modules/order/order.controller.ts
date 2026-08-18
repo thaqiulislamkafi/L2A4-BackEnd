@@ -67,12 +67,8 @@ export const OrderController = {
 
         try {
 
-            if (!req.user) {
-                throw new Error("User not found");
-            }
-
-            const orderData = req.body;
-            const result = await OrderService.addOrder(orderData,String(req.user.id));
+            const userId = req.params.userId ;
+            const result = await OrderService.addOrder(String(userId));
 
             res.status(201).send({
                 success: true,

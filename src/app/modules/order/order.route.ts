@@ -7,6 +7,6 @@ OrderRoute.get("/", OrderController.getAllOrders);
 OrderRoute.get("/user/:user_id", OrderController.getOrdersByUser);
 OrderRoute.get("/:id", OrderController.getOrderById);
 
-OrderRoute.post("/", OrderController.addOrder);
+OrderRoute.post("/:userId", OrderController.addOrder);
 OrderRoute.patch("/:id/cancel", OrderController.cancelOrder);
 OrderRoute.delete("/:id", OrderController.deleteOrder);

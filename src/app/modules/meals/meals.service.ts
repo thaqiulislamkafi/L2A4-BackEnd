@@ -1,6 +1,7 @@
 import { Meal } from "../../../generated/prisma/client";
 import { prisma } from "../../../lib/prisma"
 import { User } from "../../../prisma/client";
+import { TransactionClient } from "../../types/transactionClient.type";
 import { getMonthAndDate } from "../../utils/getMonthAndDate";
 import { QueryBuilder } from "../../utils/QueryBuilder";
 import { DashboardStatsService } from "../dashboardStats/dashboardStats.service";
@@ -176,5 +177,37 @@ export const MealService = {
             await DashboardStatsService.decrementMealsCreated(date.year, date.month);
         }
 
+    },
+
+    async incrementMealQuantity(mealId:string,quantity:number,tx : TransactionClient = prisma) {
+
+        const result = await tx.meal.update({
+            where : {
+                id : mealId
+            },
+            data : {
+                totalPieces : {
+                    increment : quantity
+                }
+            }
+        }) ;
+
+        return result ;
+    },
+
+    async decrementMealQuantity(mealId:string,quantity:number,tx : TransactionClient = prisma) {
+
+        const result = await tx.meal.update({
+            where : {
+                id : mealId
+            },
+            data : {
+                totalPieces : {
+                    decrement : quantity
+                }
+            }
+        }) ;
+
+        return result ;
     }
 }

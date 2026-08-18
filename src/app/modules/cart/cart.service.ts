@@ -11,9 +11,13 @@ export const CartService = {
         
     },
 
-    async getCartById(id: string) {
-        const cart = await prisma.cart.findUnique({
-            where: { id }
+    async getCartById(id: string, tx: TransactionClient = prisma) {
+
+        const cart = await tx.cart.findUnique({
+            where: { id },
+            include :{
+                cartItems : true
+            }
         })
 
         return cart
