@@ -10,7 +10,7 @@ import { SendEmailVeification } from "../app/utils/SendEmailVerification";
 
 export const auth = betterAuth({
     database: prismaAdapter(prisma, {
-        provider: "postgresql", // or "mysql", "postgresql", ...etc
+        provider: "postgresql"
     }),
     trustedOrigins: ['http://localhost:4000', 'http://localhost:3000'],
     emailAndPassword: {
