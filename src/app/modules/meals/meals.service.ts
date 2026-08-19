@@ -47,6 +47,52 @@ export const MealService = {
         }
     },
 
+     async getPublishedMeals(query: Record<string, unknown>) {
+
+        const qb = new QueryBuilder(query)
+            .search(['name'])
+            .sort()
+            .paginate()
+
+        const prismaQuery = qb.build();
+
+        const page = Number(query.page) || 1;
+        const limit = Number(query.limit) || 10;
+
+        const conditionWhere = {
+            ...prismaQuery.where,
+            isPublished : true
+        }
+
+        const [result, total] = await Promise.all([
+
+            await prisma.meal.findMany({
+                ...prismaQuery,
+                where: conditionWhere,
+                include: {
+                    cuisine_rel: true,
+                    category_rel: true,
+                    dietry_rel: true
+                }
+            }),
+
+            await prisma.meal.count({
+                where: conditionWhere
+            })
+        ])
+
+        return {
+            data: result,
+            meta: {
+                page,
+                limit,
+                total,
+                totalPage: Math.ceil(total / limit)
+            }
+        }
+
+    },
+
     async getMealsByProvider(provider_id: string, query: Record<string, unknown>) {
 
         const qb = new QueryBuilder(query)
@@ -231,4 +277,43 @@ export const MealService = {
 
         return result;
     },
+
+    async manageMealSliderContent(mealId:string,isSliderContent:boolean){
+
+        const result = await prisma.meal.update({
+            where: {
+                id: mealId
+            },
+            data: {
+                isSliderContent: isSliderContent
+            }
+        });
+
+        return result;
+    },
+
+    async getMealSliderContents(){
+
+        const result = await prisma.meal.findMany({
+            where : {
+                isSliderContent : true
+            }
+        }) ;
+
+        return result ;
+    },
+
+    async manageMealPublish(mealId:string,isPublished : boolean){
+
+        const result = await prisma.meal.update({
+            where : {
+                id : mealId
+            },
+            data : {
+                isPublished : isPublished
+            }
+        }) ;
+
+        return result ;
+    }
 }
