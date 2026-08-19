@@ -10,9 +10,13 @@ export const MealRoute = Router();
 
 MealRoute.get('/',MealController.getMeals) ;
 MealRoute.get('/:id',MealController.getMealById) ;
-MealRoute.get('/provider/:provider_id',MealController.getMealsByProvider)
+MealRoute.get('/provider/:provider_id',MealController.getMealsByProvider) ;
+MealRoute.get("/hero-content",MealController.getMealHeroContent);
 
 MealRoute.post('/',validate(addMealSchema),MealController.addMeal) ;
 MealRoute.post('/image-upload',mealUpload.single('file'),MealController.uploadMealImage);
 MealRoute.put('/:id',validate(updateMealSchema),verifyAuth,MealController.updateMeal) ;
 MealRoute.delete('/:id',verifyAuth,MealController.deleteMeal) ;
+
+MealRoute.put("/mark/hero-content/:id",MealController.markMealHeroContent);
+MealRoute.put("/unmark/hero-content/:id",MealController.unMarkMealHeroContent);

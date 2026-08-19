@@ -29,10 +29,7 @@ export const OrderController = {
             }
 
             const user_id = String(req.params.user_id);
-            const orders = await OrderService.getOrdersByUser(
-                user_id,
-                req.query
-            );
+            const orders = await OrderService.getOrdersByUser(user_id,req.query);
 
             res.status(200).send({
                 success: true,
@@ -90,7 +87,7 @@ export const OrderController = {
             }
 
             const orderId = String(req.params.id);
-            const cancelledOrder = await OrderService.cancelOrder(orderId, String(req.user.id));
+            const cancelledOrder = await OrderService.cancelOrder(orderId);
 
             res.status(200).send({
                 success: true,

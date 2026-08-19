@@ -25,7 +25,7 @@ export const MealController = {
         try {
 
             const id = String(req.params.id);          
-            const meals = await MealService.findMealsById(id);
+            const meals = await MealService.findMealById(id);
 
             res.status(200).send({
                 success : true,
@@ -143,6 +143,60 @@ export const MealController = {
                 message : "Meal deleted successfully",
                 data : deletedMeal
             });
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    async markMealHeroContent(req: Request,res: Response,next: NextFunction) {
+
+        try {
+
+            const mealId = String(req.params.id);
+            const result = await MealService.markMealHeroContent(mealId);
+
+            res.status(200).send({
+                success: true,
+                message: "Meal marked as hero content successfully",
+                data: result
+            });
+
+        } catch (error) {
+            next(error);
+        }
+    },
+
+
+    async unMarkMealHeroContent(req: Request,res: Response,next: NextFunction) {
+
+        try {
+
+            const mealId = String(req.params.id);
+            const result = await MealService.unMarkMealHeroContent(mealId);
+
+            res.status(200).send({
+                success: true,
+                message: "Meal unmarked as hero content successfully",
+                data: result
+            });
+
+        } catch (error) {
+            next(error);
+        }
+    },
+
+
+    async getMealHeroContent(req: Request,res: Response,next: NextFunction) {
+
+        try {
+
+            const result = await MealService.getMealHeroContent();
+            res.status(200).send({
+                success: true,
+                message: "Hero meal fetched successfully",
+                data: result
+            });
+
         } catch (error) {
             next(error);
         }

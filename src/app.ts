@@ -12,6 +12,7 @@ import { ReviewsRoute } from "./app/modules/reviews/reviews.route";
 import { GlobalReviewsRoute } from "./app/modules/globalReviews/globalReviews.route";
 import { AuthRoute } from "./app/modules/auth/auth.route";
 import { CartRoute } from "./app/modules/cart/cart.route";
+import { FAQRouter } from "./app/modules/Faq/faq.route";
 
 export const app = express() ;
 app.use(cors()) ;
@@ -33,6 +34,7 @@ app.use('/api/cart-items',CartItemRoute) ;
 app.use('/api/reviews',ReviewsRoute) ;
 app.use('/api/global-reviews',GlobalReviewsRoute) ;
 
+app.use('/api/faqs',FAQRouter) ;
 app.use('/api/auth',AuthRoute) ;
 
 app.use(NotFound) ;

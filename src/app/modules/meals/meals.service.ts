@@ -127,7 +127,7 @@ export const MealService = {
         })
     },
 
-    async updateMeal(id: string, data: Partial<Meal>, user: User) {
+    async updateMeal(id: string, data: Partial<Meal>, user: Partial<User>) {
 
         const where = user.role === 'admin' ? { id } : { id, user_id: user.id };
 
@@ -138,7 +138,7 @@ export const MealService = {
 
     },
 
-    async deleteMeal(id: string, user: User) {
+    async deleteMeal(id: string, user: Partial<User>) {
 
         const where = user.role === 'admin' ? { id } : { id, user_id: user.id };
 
@@ -184,5 +184,51 @@ export const MealService = {
         });
 
         return result;
-    }
+    },
+
+
+    async markMealHeroContent(mealId: string) {
+
+        return await prisma.$transaction(async (tx) => {
+
+            const isExist = await this.getMealHeroContent(tx);
+            if (isExist) await this.unMarkMealHeroContent(isExist.id, tx);
+
+            const result = await tx.meal.update({
+                where: {
+                    id: mealId
+                },
+                data: {
+                    isHeroContent: true
+                }
+            });
+
+            return result;
+        })
+    },
+
+    async unMarkMealHeroContent(mealId: string, tx: TransactionClient = prisma) {
+
+        const result = await tx.meal.update({
+            where: {
+                id: mealId
+            },
+            data: {
+                isHeroContent: false
+            }
+        });
+
+        return result;
+    },
+
+    async getMealHeroContent(tx: TransactionClient = prisma) {
+
+        const result = await tx.meal.findFirst({
+            where: {
+                isHeroContent: true
+            }
+        })
+
+        return result;
+    },
 }
