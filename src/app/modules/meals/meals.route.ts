@@ -9,11 +9,11 @@ import { verifyAuth } from "../../middlewares/verifyAuth";
 export const MealRoute = Router();
 
 MealRoute.get('/',MealController.getMeals) ;
-MealRoute.get('/:id',MealController.getMealById) ;
-MealRoute.get('/provider/:provider_id',MealController.getMealsByProvider) ;
 MealRoute.get("/hero-content",MealController.getMealHeroContent);
-
 MealRoute.get("/published",MealController.getPublishedMeals);
+MealRoute.get('/:id',MealController.getMealById) ;
+
+MealRoute.get('/provider/:provider_id',MealController.getMealsByProvider) ;
 MealRoute.get("/slider-content",MealController.getMealSliderContents);
 
 MealRoute.post('/',validate(addMealSchema),MealController.addMeal) ;

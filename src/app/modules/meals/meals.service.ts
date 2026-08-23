@@ -148,13 +148,13 @@ export const MealService = {
             include: {
                 provider: true,
                 reviews: true,
+                mealAnalytics : true,
                 dietry_rel: true,
                 cuisine_rel: true,
                 category_rel: true
             }
         })
         return meal
-        return meal;
     },
 
     async addMeal(data: Meal) {
@@ -272,6 +272,9 @@ export const MealService = {
         const result = await tx.meal.findFirst({
             where: {
                 isHeroContent: true
+            },
+            include : {
+                mealAnalytics : true
             }
         })
 

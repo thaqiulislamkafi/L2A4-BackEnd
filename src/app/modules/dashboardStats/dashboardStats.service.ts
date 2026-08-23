@@ -21,11 +21,16 @@ export const DashboardStatsService = {
 
     async getDashboardStats() {
 
-        const [totalUsers, totalMeals, totalOrders, totalReviews] = await Promise.all([
+        const [totalUsers,totalProviders, totalMeals, totalOrders, totalReviews] = await Promise.all([
 
             prisma.user.count({
                 where: {
                     role: 'user'
+                }
+            }),
+            prisma.user.count({
+                where: {
+                    role: 'provider'
                 }
             }),
 
@@ -36,6 +41,7 @@ export const DashboardStatsService = {
 
         return {
             totalUsers,
+            totalProviders,
             totalMeals,
             totalOrders,
             totalReviews

@@ -1,13 +1,15 @@
 import { Router } from "express";
 import { DashboardStatsController } from "./dashboardStats.controller";
 
-export const DashboardStatsRouter = Router();
+export const DashboardStatsRoute = Router();
 
-DashboardStatsRouter.get("/", DashboardStatsController.getAllDashboardStats) ;
-DashboardStatsRouter.get("/yearly",DashboardStatsController.getYearlyStats) ;
-DashboardStatsRouter.get("/monthly",DashboardStatsController.getMonthlyStats) ;
-DashboardStatsRouter.get('/stats',DashboardStatsController.getDashboardStats) ;
+DashboardStatsRoute.get("/", DashboardStatsController.getAllDashboardStats) ;
+DashboardStatsRoute.get("/stats", DashboardStatsController.getDashboardStats) ;
 
-DashboardStatsRouter.get("/month/:month",DashboardStatsController.getDashboardStatsByMonth) ;
-DashboardStatsRouter.get("/:id",DashboardStatsController.getDashboardStatsById) ;
-DashboardStatsRouter.put("/:id",DashboardStatsController.updateDashboardStats) ;
+DashboardStatsRoute.get("/yearly",DashboardStatsController.getYearlyStats) ;
+DashboardStatsRoute.get("/monthly",DashboardStatsController.getMonthlyStats) ;
+DashboardStatsRoute.get('/stats',DashboardStatsController.getDashboardStats) ;
+
+DashboardStatsRoute.get("/month/:month",DashboardStatsController.getDashboardStatsByMonth) ;
+DashboardStatsRoute.get("/:id",DashboardStatsController.getDashboardStatsById) ;
+DashboardStatsRoute.put("/:id",DashboardStatsController.updateDashboardStats) ;

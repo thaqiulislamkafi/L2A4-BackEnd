@@ -97,6 +97,17 @@ export const AuthService = {
         return result;
     },
 
+    async GetMe(req:AuthRequest){
+
+        const session = await auth.api.getSession({
+            headers : fromNodeHeaders(req.headers)
+        })
+
+        if(!session) throw new Error('Not Authenticated') ;
+
+        return session
+    },
+
     async changePassword(data: { password: string; newPassword: string }, req: AuthRequest) {
 
         const result = await auth.api.changePassword({

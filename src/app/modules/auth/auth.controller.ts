@@ -69,6 +69,21 @@ export const AuthController = {
         }
     },
 
+    async GetMe(req: AuthRequest, res: Response, next: NextFunction){
+
+        try {
+            const result = await AuthService.GetMe(req) ;
+
+            res.status(200).json({
+                success: true,
+                message: 'User and session get successfull',
+                data: result,
+            });
+        } catch (error) {
+            next(error)
+        }
+    },
+
     async SignOut(req: AuthRequest, res: Response, next: NextFunction) {
 
         try {

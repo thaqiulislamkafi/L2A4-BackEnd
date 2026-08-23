@@ -12,8 +12,9 @@ AuthRoute.get('/:id',AuthController.getUserById) ;
 AuthRoute.post('/sign-up',AuthController.SignUp) ;
 AuthRoute.post('/sign-in',validate(signinSchema),AuthController.SignIn) ;
 AuthRoute.post('/sign-out',AuthController.SignOut) ;
-AuthRoute.post('/change-password',validate(changePasswordSchema),AuthController.changePassword) ;
+AuthRoute.post('/get-me',AuthController.GetMe) ;
 
+AuthRoute.post('/change-password',validate(changePasswordSchema),AuthController.changePassword) ;
 AuthRoute.post('/request-reset',validate(changePasswordSchema),AuthController.RequestPasswordReset) ;
 AuthRoute.post('/reset-password',validate(changePasswordSchema),AuthController.ResetPassword) ;
 

@@ -3,13 +3,13 @@ import { FAQController } from "./faq.controller";
 import { validate } from "../../middlewares/validate";
 import { addFAQSchema, updateFAQSchema } from "./faq.schema";
 
-export const FAQRouter = Router();
+export const FAQRoute = Router();
 
-FAQRouter.get("/",FAQController.getAllFAQs);
-FAQRouter.get("/published",FAQController.getPublishedFAQs);
-FAQRouter.get("/:id", FAQController.getFAQById);
+FAQRoute.get("/",FAQController.getAllFAQs);
+FAQRoute.get("/published",FAQController.getPublishedFAQs);
+FAQRoute.get("/:id", FAQController.getFAQById);
 
-FAQRouter.post("/",validate(addFAQSchema),FAQController.createFAQ);
-FAQRouter.put("/:id",validate(updateFAQSchema),FAQController.updateFAQ);
-FAQRouter.patch("/:id/toggle-status",FAQController.togglePublishStatus);
-FAQRouter.delete("/:id",FAQController.deleteFAQ);
+FAQRoute.post("/",validate(addFAQSchema),FAQController.createFAQ);
+FAQRoute.put("/:id",validate(updateFAQSchema),FAQController.updateFAQ);
+FAQRoute.patch("/:id/toggle-status",FAQController.togglePublishStatus);
+FAQRoute.delete("/:id",FAQController.deleteFAQ);
