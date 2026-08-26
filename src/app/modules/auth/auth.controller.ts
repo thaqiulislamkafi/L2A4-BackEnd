@@ -1,4 +1,4 @@
-import { NextFunction, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { AuthRequest } from "../../types/AuthRequest.type";
 import { appendCookies } from "../../utils/appendCookies";
 import { AuthService } from "./auth.service";
@@ -30,7 +30,7 @@ export const AuthController = {
             res.status(200).json({
                 success: true,
                 message: 'User data is successfully retreived',
-                data : result,
+                data: result,
             });
         } catch (error) {
             next(error)
@@ -69,10 +69,34 @@ export const AuthController = {
         }
     },
 
-    async GetMe(req: AuthRequest, res: Response, next: NextFunction){
+    async uploadUserImage(req: Request, res: Response, next: NextFunction) {
 
         try {
-            const result = await AuthService.GetMe(req) ;
+            if (!req.file) {
+                return res.status(400).send({
+                    success: false,
+                    message: "No file uploaded"
+                });
+            }
+
+            res.status(200).send({
+                success: true,
+                message: "User image uploaded successfully",
+                data: {
+                    imageUrl: req.file.path,
+                    publicId: req.file.filename
+                }
+            });
+
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    async GetMe(req: AuthRequest, res: Response, next: NextFunction) {
+
+        try {
+            const result = await AuthService.GetMe(req);
 
             res.status(200).json({
                 success: true,
@@ -203,6 +227,22 @@ export const AuthController = {
                 success: true,
                 message: 'All sessions logged out successfully',
                 data: result.status
+            });
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    async updateUser(req: AuthRequest, res: Response, next: NextFunction) {
+
+        try {
+            const user_id = req.params.id;
+            const result = await AuthService.updateUser(String(user_id),req.body);
+
+            return res.status(200).json({
+                success: true,
+                message: 'User Updated successfully',
+                data: result
             });
         } catch (error) {
             next(error)

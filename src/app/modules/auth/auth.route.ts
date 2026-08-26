@@ -1,15 +1,17 @@
 
 import { Router } from "express";
 import { AuthController } from "./auth.controller";
-import { changePasswordSchema, signinSchema } from "./auth.schema";
+import { changePasswordSchema, signinSchema, signupSchema, updateUserSchema } from "./auth.schema";
 import { validate } from "../../middlewares/validate";
+import { mealUpload } from "../../../config/multerCloudinary";
 
 export const AuthRoute = Router();
 
 AuthRoute.get('/',AuthController.getAllUsers) ;
 AuthRoute.get('/:id',AuthController.getUserById) ;
+AuthRoute.post('/image-upload',mealUpload.single('file'),AuthController.uploadUserImage);
 
-AuthRoute.post('/sign-up',AuthController.SignUp) ;
+AuthRoute.post('/sign-up',validate(signupSchema),AuthController.SignUp) ;
 AuthRoute.post('/sign-in',validate(signinSchema),AuthController.SignIn) ;
 AuthRoute.post('/sign-out',AuthController.SignOut) ;
 AuthRoute.post('/get-me',AuthController.GetMe) ;
@@ -23,5 +25,6 @@ AuthRoute.post('/verify-otp',validate(changePasswordSchema),AuthController.verif
 AuthRoute.post('/resetpassword-by-otp',validate(changePasswordSchema),AuthController.resetPasswordByOTP);
 
 AuthRoute.post('/logout-all',AuthController.logOutAllSessions) ;
+AuthRoute.put('/:id',validate(updateUserSchema),AuthController.updateUser) ;
 AuthRoute.delete('/:id',AuthController.deleteUser) ;
 AuthRoute.delete('/',AuthController.deleteAllUsers) ;

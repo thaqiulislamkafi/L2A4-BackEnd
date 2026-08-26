@@ -14,10 +14,11 @@ import { AuthRoute } from "./app/modules/auth/auth.route";
 import { CartRoute } from "./app/modules/cart/cart.route";
 import { FAQRoute } from "./app/modules/Faq/faq.route";
 import { DashboardStatsRoute } from "./app/modules/dashboardStats/dashboardStats.route";
+import { DashboardRoute } from "./app/modules/dashboard/dashboard.route";
 
 export const app = express() ;
 app.use(cors({
-    origin : ['http://localhost:3000'],
+    origin : ['http://localhost:3000','http://localhost:6001'],
     credentials : true
 })) ;
 app.use(express.json()) ;
@@ -39,7 +40,8 @@ app.use('/api/reviews',ReviewsRoute) ;
 app.use('/api/global-reviews',GlobalReviewsRoute) ;
 
 app.use('/api/faqs',FAQRoute) ;
-app.use('/api/dashboard-stats',DashboardStatsRoute)
+app.use('/api/dashboard',DashboardRoute) ;
+app.use('/api/dashboard-stats',DashboardStatsRoute) ;
 app.use('/api/auth',AuthRoute) ;
 
 app.use(NotFound) ;

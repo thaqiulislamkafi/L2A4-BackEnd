@@ -8,6 +8,7 @@ import { QueryBuilder } from "../../utils/QueryBuilder";
 import { DashboardStatsService } from "../dashboardStats/dashboardStats.service";
 import { getMonthAndDate } from "../../utils/getMonthAndDate";
 import { CartService } from "../cart/cart.service";
+import { User } from "../../../generated/prisma/client";
 
 export const AuthService = {
 
@@ -179,6 +180,17 @@ export const AuthService = {
         });
 
         return result;
+    },
+
+    async updateUser(userId:string,data : Partial<User>){
+
+        const result = await prisma.user.update({
+            where : {
+                id : userId
+            },
+            data : data
+        }) ;
+        return result ;
     },
 
     async deleteUser(userId: string) {
