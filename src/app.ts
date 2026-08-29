@@ -15,6 +15,7 @@ import { CartRoute } from "./app/modules/cart/cart.route";
 import { FAQRoute } from "./app/modules/Faq/faq.route";
 import { DashboardStatsRoute } from "./app/modules/dashboardStats/dashboardStats.route";
 import { DashboardRoute } from "./app/modules/dashboard/dashboard.route";
+import { OrderItemsRoute } from "./app/modules/orderItems/orderItems.route";
 
 export const app = express() ;
 app.use(cors({
@@ -33,6 +34,8 @@ app.use('/api/dietry-types',DietryTypeRoute) ;
 
 app.use('/api/meals',MealRoute) ;
 app.use('/api/orders',OrderRoute) ;
+app.use('/api/order-items',OrderItemsRoute) ;
+
 
 app.use('/api/carts',CartRoute) ;
 app.use('/api/cart-items',CartItemRoute) ;

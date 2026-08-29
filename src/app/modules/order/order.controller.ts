@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { AuthRequest } from "../../types/AuthRequest.type";
 import { OrderService } from "./order.service";
+import { OrderStatus } from "../../../prisma/enums";
 
 export const OrderController = {
 
@@ -95,6 +96,28 @@ export const OrderController = {
                 data: cancelledOrder
             });
 
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    async updateOrderStatus(req: AuthRequest, res: Response, next: NextFunction){
+
+        try {
+
+            const orderId = String(req.params.id);
+            const status : OrderStatus = req.body.status  ;
+
+            if(!status) throw new Error('Status not found');
+            if(status === 'CANCELLED') await OrderService.cancelOrder(orderId) ;
+
+            const updatedOrder = await OrderService.updateOrderStatus(orderId,status);
+
+            res.status(200).send({
+                success: true,
+                message: "Order Status updated successfully",
+                data: updatedOrder
+            });
         } catch (error) {
             next(error);
         }

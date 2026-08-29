@@ -26,30 +26,6 @@ export const OrderService = {
 
             prisma.order.findMany({
                 ...prismaQuery,
-                include: {
-                    orderItems: {
-                        include: {
-                            meal: {
-                                select: {
-                                    id: true,
-                                    name: true,
-                                    image: true,
-                                    category_rel: true
-                                }
-                            },
-
-                        }
-                    },
-                    user: {
-                        select: {
-                            id: true,
-                            name: true,
-                            image: true,
-                            email: true
-                        }
-                    }
-
-                }
             }),
 
             prisma.order.count({
@@ -90,30 +66,6 @@ export const OrderService = {
             await prisma.order.findMany({
                 ...prismaQuery,
                 where: conditionWhere,
-                include: {
-                    orderItems: {
-                        include: {
-                            meal: {
-                                select: {
-                                    id: true,
-                                    name: true,
-                                    image: true,
-                                    category_rel: true
-                                }
-                            },
-
-                        }
-                    },
-                    user: {
-                        select: {
-                            id: true,
-                            name: true,
-                            image: true,
-                            email: true
-                        }
-                    }
-
-                }
             }),
 
             await prisma.order.count({

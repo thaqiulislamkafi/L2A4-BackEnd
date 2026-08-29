@@ -105,6 +105,64 @@ export const OrderItemsService = {
         })
     },
 
+    async getOrderItemsByProviderId(providerId: string, query: Record<string, unknown>) {
+        const qb = new QueryBuilder(query)
+            .sort()
+            .paginate();
+
+        const prismaQuery = qb.build();
+
+        const conditionWhere = {
+            ...prismaQuery.where,
+            meal: {
+                provider_id: providerId,
+            },
+        };
+
+        const page = Number(query.page) || 1;
+        const limit = Number(query.limit) || 10;
+
+        const [result, total] = await Promise.all([
+            prisma.orderItem.findMany({
+                ...prismaQuery,
+                where: conditionWhere,
+                include: {
+                    meal: {
+                        select: {
+                            id: true,
+                            name: true,
+                            image: true,
+                            pricePerPiece: true,
+                        },
+                    },
+                    order: {
+                        select: {
+                            id: true,
+                            user_id: true,
+                            total_price: true,
+                            status: true,
+                            createdAt: true,
+                        },
+                    },
+                },
+            }),
+
+            prisma.orderItem.count({
+                where: conditionWhere,
+            }),
+        ]);
+
+        return {
+            data: result,
+            meta: {
+                page,
+                limit,
+                total,
+                totalPage: Math.ceil(total / limit),
+            },
+        };
+    },
+
     async getOrderItem(id: string) {
 
         return await prisma.orderItem.findUnique({

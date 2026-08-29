@@ -3,7 +3,7 @@ import { OrderItemsService } from "./orderItems.service";
 
 export const OrderItemsController = {
 
-    async getAllOrderItems(req: Request,res: Response,next: NextFunction) {
+    async getAllOrderItems(req: Request, res: Response, next: NextFunction) {
 
         try {
 
@@ -21,7 +21,7 @@ export const OrderItemsController = {
     },
 
 
-    async getOrderItemsByMealId(req: Request,res: Response,next: NextFunction) {
+    async getOrderItemsByMealId(req: Request, res: Response, next: NextFunction) {
 
         try {
 
@@ -43,7 +43,7 @@ export const OrderItemsController = {
     },
 
 
-    async getOrderItemByOrderId(req: Request,res: Response,next: NextFunction) {
+    async getOrderItemByOrderId(req: Request, res: Response, next: NextFunction) {
 
         try {
 
@@ -64,7 +64,7 @@ export const OrderItemsController = {
     },
 
 
-    async getOrderItem(req: Request,res: Response,next: NextFunction) {
+    async getOrderItem(req: Request, res: Response, next: NextFunction) {
 
         try {
 
@@ -82,8 +82,24 @@ export const OrderItemsController = {
         }
     },
 
+    async getOrderItemsByProviderId(req: Request, res: Response, next: NextFunction) {
+        try {
+            const providerId = String(req.params.providerId);
+            const result = await OrderItemsService.getOrderItemsByProviderId(providerId, req.query);
 
-    async cancelOrderItems(req: Request,res: Response,next: NextFunction) {
+            res.status(200).send({
+                success: true,
+                message: "Provider order items fetched successfully",
+                data: result
+            });
+
+        } catch (error) {
+            next(error);
+        }
+    },
+
+
+    async cancelOrderItems(req: Request, res: Response, next: NextFunction) {
 
         try {
 
