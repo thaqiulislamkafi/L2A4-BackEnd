@@ -185,11 +185,11 @@ export const AuthController = {
         }
     },
 
-    async verifyOTP(req: AuthRequest, res: Response, next: NextFunction) {
+    async verifyOtpForForgetPassword(req: AuthRequest, res: Response, next: NextFunction) {
 
         try {
             const { email, otp } = req.body;
-            const result = await AuthService.verifyOtp(email, otp);
+            const result = await AuthService.verifyOtpForForgetPassword(email, otp);
 
             res.status(200).json({
                 success: true,
@@ -219,6 +219,40 @@ export const AuthController = {
         }
     },
 
+    async sendOtpForEmailVerification(req: AuthRequest, res: Response, next: NextFunction) {
+
+        try {
+            const { email } = req.body;
+            const result = await AuthService.sendOtpForEmailVerification(email);
+
+            res.status(200).json({
+                success: true,
+                message: 'OTP is send for email verifiction successfully',
+                data: result.success
+            });
+
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    async verifyOtpForEmailVerification(req: AuthRequest, res: Response, next: NextFunction) {
+
+        try {
+            const { email,otp } = req.body;
+            const result = await AuthService.verifyOtpForEmailVerification(email,otp);
+
+            res.status(200).json({
+                success: true,
+                message: 'OTP is verified for email verifiction successfully',
+                data: result
+            });
+
+        } catch (error) {
+            next(error)
+        }
+    },
+
     async logOutAllSessions(req: AuthRequest, res: Response, next: NextFunction) {
 
         try {
@@ -237,7 +271,7 @@ export const AuthController = {
 
         try {
             const user_id = req.params.id;
-            const result = await AuthService.updateUser(String(user_id),req.body);
+            const result = await AuthService.updateUser(String(user_id), req.body);
 
             return res.status(200).json({
                 success: true,

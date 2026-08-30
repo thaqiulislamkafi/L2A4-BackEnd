@@ -147,7 +147,7 @@ export const AuthService = {
         return result;
     },
 
-    async verifyOtp(email: string, otp: string) {
+    async verifyOtpForForgetPassword(email: string, otp: string) {
 
         const result = await auth.api.checkVerificationOTP({
             body: {
@@ -171,6 +171,30 @@ export const AuthService = {
         });
 
         return result
+    },
+
+    async sendOtpForEmailVerification(email:string){
+
+        const result = await auth.api.sendVerificationOTP({
+			body: {
+				email,
+				type: "email-verification",
+			},
+		});
+
+        return result ;
+    },
+
+    async verifyOtpForEmailVerification(email:string,otp:string){
+
+        const result = await auth.api.verifyEmailOTP({
+			body: {
+				email,
+				otp,
+			},
+		});
+
+        return result ;
     },
 
     async logOutAllSessions(req: AuthRequest) {

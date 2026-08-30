@@ -134,16 +134,7 @@ export const OrderItemsService = {
                             image: true,
                             pricePerPiece: true,
                         },
-                    },
-                    order: {
-                        select: {
-                            id: true,
-                            user_id: true,
-                            total_price: true,
-                            status: true,
-                            createdAt: true,
-                        },
-                    },
+                    }
                 },
             }),
 

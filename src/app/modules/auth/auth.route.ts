@@ -21,8 +21,11 @@ AuthRoute.post('/request-reset',validate(changePasswordSchema),AuthController.Re
 AuthRoute.post('/reset-password',validate(changePasswordSchema),AuthController.ResetPassword) ;
 
 AuthRoute.post('/forgot-password',validate(changePasswordSchema),AuthController.forgotPasswordByOTP) ;
-AuthRoute.post('/verify-otp',validate(changePasswordSchema),AuthController.verifyOTP);
+AuthRoute.post('/verify-otp',validate(changePasswordSchema),AuthController.verifyOtpForForgetPassword);
 AuthRoute.post('/resetpassword-by-otp',validate(changePasswordSchema),AuthController.resetPasswordByOTP);
+
+AuthRoute.post('/send-email-otp',AuthController.sendOtpForEmailVerification) ;
+AuthRoute.post('/verify-otp-email',AuthController.verifyOtpForEmailVerification) ;
 
 AuthRoute.post('/logout-all',AuthController.logOutAllSessions) ;
 AuthRoute.put('/:id',validate(updateUserSchema),AuthController.updateUser) ;

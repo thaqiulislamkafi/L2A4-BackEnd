@@ -49,11 +49,16 @@ export const auth = betterAuth({
         emailOTP({
             async sendVerificationOTP({email,otp,type}){
                 if(type == 'forget-password'){
-                    SendEmailVeification(email,'Dear User',otp)}
+                    SendEmailVeification(email,'Dear User',otp)
+                }
+                else if(type == 'email-verification'){
+                    SendEmailVeification(email,'Dear User',otp)
+                }
             },
             otpLength : 6,
             expiresIn : 300,
-            allowedAttempts : 3
+            allowedAttempts : 3,
+            overrideDefaultEmailVerification : true
         })
     ]
 });
