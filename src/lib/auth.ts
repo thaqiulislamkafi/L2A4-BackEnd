@@ -47,11 +47,17 @@ export const auth = betterAuth({
     },
     plugins : [
         emailOTP({
+            changeEmail:{
+                enabled : true
+            },
             async sendVerificationOTP({email,otp,type}){
                 if(type == 'forget-password'){
                     SendEmailVeification(email,'Dear User',otp)
                 }
                 else if(type == 'email-verification'){
+                    SendEmailVeification(email,'Dear User',otp)
+                }
+                else if(type=='change-email'){
                     SendEmailVeification(email,'Dear User',otp)
                 }
             },

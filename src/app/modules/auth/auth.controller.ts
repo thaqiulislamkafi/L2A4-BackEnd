@@ -239,8 +239,8 @@ export const AuthController = {
     async verifyOtpForEmailVerification(req: AuthRequest, res: Response, next: NextFunction) {
 
         try {
-            const { email,otp } = req.body;
-            const result = await AuthService.verifyOtpForEmailVerification(email,otp);
+            const { email, otp } = req.body;
+            const result = await AuthService.verifyOtpForEmailVerification(email, otp);
 
             res.status(200).json({
                 success: true,
@@ -250,6 +250,41 @@ export const AuthController = {
 
         } catch (error) {
             next(error)
+        }
+    },
+
+    async requestEmailChangeOTP(req: AuthRequest, res: Response, next: NextFunction) {
+
+        try {
+
+            const { newEmail } = req.body;
+            await AuthService.requestEmailChangeOTP(newEmail,req);
+
+            res.status(200).send({
+                success: true,
+                message: "OTP sent to new email address"
+            });
+
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    async ChangeEmailByOTP(req: AuthRequest, res: Response, next: NextFunction) {
+
+        try {
+
+            const { newEmail, otp } = req.body;
+            const result = await AuthService.ChangeEmailByOTP(newEmail, otp, req);
+
+            res.status(200).send({
+                success: true,
+                message: "Email changed successfully",
+                data: result
+            });
+
+        } catch (error) {
+            next(error);
         }
     },
 

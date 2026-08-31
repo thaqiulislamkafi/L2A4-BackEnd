@@ -109,7 +109,6 @@ export const ReviewsService = {
                 ...prismaQuery,
                 where: conditionWhere,
                 include: {
-                    user: true,
                     meal: true
                 }
             }),

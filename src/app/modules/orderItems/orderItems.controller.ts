@@ -63,6 +63,25 @@ export const OrderItemsController = {
         }
     },
 
+    async getOrderItemsByUserId(req: Request, res: Response, next: NextFunction) {
+
+        try {
+
+            const userId = String(req.params.userId);
+
+            const result = await OrderItemsService.getOrderItemsByUserId(userId, req.query);
+
+            res.status(200).send({
+                success: true,
+                message: "Order items of the user fetched successfully",
+                ...result
+            });
+
+        } catch (error) {
+            next(error);
+        }
+    },
+
 
     async getOrderItem(req: Request, res: Response, next: NextFunction) {
 

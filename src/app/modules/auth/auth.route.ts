@@ -26,6 +26,8 @@ AuthRoute.post('/resetpassword-by-otp',validate(changePasswordSchema),AuthContro
 
 AuthRoute.post('/send-email-otp',AuthController.sendOtpForEmailVerification) ;
 AuthRoute.post('/verify-otp-email',AuthController.verifyOtpForEmailVerification) ;
+AuthRoute.post('/change-email',AuthController.ChangeEmailByOTP) ;
+AuthRoute.post('/otp-change-email',AuthController.requestEmailChangeOTP) ;
 
 AuthRoute.post('/logout-all',AuthController.logOutAllSessions) ;
 AuthRoute.put('/:id',validate(updateUserSchema),AuthController.updateUser) ;
