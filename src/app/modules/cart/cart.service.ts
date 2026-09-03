@@ -23,6 +23,18 @@ export const CartService = {
         return cart
     },
 
+    async getCartByUserId(userId: string, tx: TransactionClient = prisma) {
+
+        const cart = await tx.cart.findUnique({
+            where: { 
+                user_id : userId
+            },
+            
+        })
+
+        return cart
+    },
+
     async addCart(userId: string, tx : TransactionClient = prisma) {
 
         const existCart = await tx.cart.findUnique({

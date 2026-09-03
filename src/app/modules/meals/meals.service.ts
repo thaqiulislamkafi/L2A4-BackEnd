@@ -47,7 +47,7 @@ export const MealService = {
         }
     },
 
-     async getPublishedMeals(query: Record<string, unknown>) {
+    async getPublishedMeals(query: Record<string, unknown>) {
 
         const qb = new QueryBuilder(query)
             .search(['name'])
@@ -61,7 +61,7 @@ export const MealService = {
 
         const conditionWhere = {
             ...prismaQuery.where,
-            isPublished : true
+            isPublished: true
         }
 
         const [result, total] = await Promise.all([
@@ -148,7 +148,7 @@ export const MealService = {
             include: {
                 provider: true,
                 reviews: true,
-                mealAnalytics : true,
+                mealAnalytics: true,
                 dietry_rel: true,
                 cuisine_rel: true,
                 category_rel: true
@@ -186,10 +186,16 @@ export const MealService = {
 
     async deleteMeal(id: string, user: Partial<User>) {
 
-        const where = user.role === 'admin' ? { id } : { id, user_id: user.id };
+        const where = user.role === 'admin' ? { id } : { id, provider_id: user.id };
 
         return await prisma.$transaction(async (tx) => {
 
+            await tx.mealAnalytics.deleteMany({
+                where: {
+                    mealId: id
+                }
+            });
+            
             const result = await tx.meal.delete({
                 where: where
             })
@@ -273,15 +279,15 @@ export const MealService = {
             where: {
                 isHeroContent: true
             },
-            include : {
-                mealAnalytics : true
+            include: {
+                mealAnalytics: true
             }
         })
 
         return result;
     },
 
-    async manageMealSliderContent(mealId:string,isSliderContent:boolean){
+    async manageMealSliderContent(mealId: string, isSliderContent: boolean) {
 
         const result = await prisma.meal.update({
             where: {
@@ -295,28 +301,28 @@ export const MealService = {
         return result;
     },
 
-    async getMealSliderContents(){
+    async getMealSliderContents() {
 
         const result = await prisma.meal.findMany({
-            where : {
-                isSliderContent : true
+            where: {
+                isSliderContent: true
             }
-        }) ;
+        });
 
-        return result ;
+        return result;
     },
 
-    async manageMealPublish(mealId:string,isPublished : boolean){
+    async manageMealPublish(mealId: string, isPublished: boolean) {
 
         const result = await prisma.meal.update({
-            where : {
-                id : mealId
+            where: {
+                id: mealId
             },
-            data : {
-                isPublished : isPublished
+            data: {
+                isPublished: isPublished
             }
-        }) ;
+        });
 
-        return result ;
+        return result;
     }
 }

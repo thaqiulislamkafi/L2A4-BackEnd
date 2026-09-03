@@ -65,8 +65,7 @@ export const OrderController = {
 
         try {
 
-            const userId = req.params.userId ;
-            const result = await OrderService.addOrder(String(userId));
+            const result = await OrderService.addOrder(req.body);
 
             res.status(201).send({
                 success: true,
@@ -107,11 +106,11 @@ export const OrderController = {
 
             const orderId = String(req.params.id);
             const status : OrderStatus = req.body.status  ;
-
+            let updatedOrder ;
             if(!status) throw new Error('Status not found');
-            if(status === 'CANCELLED') await OrderService.cancelOrder(orderId) ;
+            if(status === 'CANCELLED') updatedOrder = await OrderService.cancelOrder(orderId) ;
 
-            const updatedOrder = await OrderService.updateOrderStatus(orderId,status);
+            updatedOrder = await OrderService.updateOrderStatus(orderId,status);
 
             res.status(200).send({
                 success: true,
