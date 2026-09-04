@@ -85,6 +85,47 @@ export const OrderService = {
         }
     },
 
+    async getOrdersByProvider(provider_id: string, query: Record<string, unknown>) {
+
+        const qb = new QueryBuilder(query)
+            .search(['id'])
+            .sort()
+            .paginate()
+
+        const prismaQuery = qb.build();
+
+        const page = Number(query.page) || 1;
+        const limit = Number(query.limit) || 10;
+
+        const conditionWhere = {
+            ...prismaQuery.where,
+            provider_id
+        }
+
+        const [result, total] = await Promise.all([
+
+            await prisma.order.findMany({
+                ...prismaQuery,
+                where: conditionWhere,
+            }),
+
+            await prisma.order.count({
+                where: conditionWhere
+            })
+        ])
+
+        return {
+            data: result,
+            meta: {
+                page,
+                limit,
+                total,
+                totalPage: Math.ceil(total / limit)
+            }
+        }
+    },
+
+
     async getOrderById(id: string, tx: TransactionClient = prisma) {
 
         const order = await tx.order.findUnique({

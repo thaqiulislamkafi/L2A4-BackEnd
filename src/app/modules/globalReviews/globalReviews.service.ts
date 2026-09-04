@@ -115,7 +115,7 @@ export const GlobalReviewsService = {
         })
     },
 
-    async updateGlobalReview(id: string, data: Partial<GlobalReview>, user: User) {
+    async updateGlobalReview(id: string, data: Partial<GlobalReview>, user: Partial<User>) {
 
         const where = user.role === 'admin' ? { id } : { id, user_id: user.id };
 
@@ -126,7 +126,7 @@ export const GlobalReviewsService = {
 
     },
 
-    async deleteGlobalReview(id: string, user: User) {
+    async deleteGlobalReview(id: string, user: Partial<User>) {
 
         const where = user.role === 'user' ? { id, user_id: user.id } : { id };
 

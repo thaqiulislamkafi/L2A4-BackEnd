@@ -43,6 +43,28 @@ export const OrderController = {
         }
     },
 
+    async getOrdersByProvider(req: AuthRequest, res: Response, next: NextFunction) {
+
+        try {
+
+            if (!req.user) {
+                throw new Error("Provider not found");
+            }
+
+            const provider_id = String(req.params.provider_id);
+            const orders = await OrderService.getOrdersByProvider(provider_id,req.query);
+
+            res.status(200).send({
+                success: true,
+                message: "Provider orders fetched successfully",
+                ...orders
+            });
+
+        } catch (error) {
+            next(error);
+        }
+    },
+
     async getOrderById(req: Request, res: Response, next: NextFunction) {
 
         try {

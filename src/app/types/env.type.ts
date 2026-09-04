@@ -9,5 +9,7 @@ export interface envType {
     CLOUDINARY_CLOUD_NAME: string;
     CLOUDINARY_API_KEY: string;
     CLOUDINARY_API_SECRET: string;
+    BETTER_AUTH_SECRET: string;
+    BETTER_AUTH_URL: string;
 
 }

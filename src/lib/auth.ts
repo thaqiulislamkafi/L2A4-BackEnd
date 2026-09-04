@@ -12,7 +12,14 @@ export const auth = betterAuth({
     database: prismaAdapter(prisma, {
         provider: "postgresql"
     }),
-    trustedOrigins: ['http://localhost:4000', 'http://localhost:3000'],
+    advanced : {
+        defaultCookieAttributes :{
+            sameSite : 'None',
+            secure : true,
+            httpOnly : true
+        }
+    },
+    trustedOrigins: ['http://localhost:4000', 'http://localhost:3000','https://l2-a4-frontend-one.vercel.app'],
     emailAndPassword: {
         enabled: true,
         sendResetPassword: async ({ user, url, token }, request) => {

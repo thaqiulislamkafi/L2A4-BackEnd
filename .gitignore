@@ -8,3 +8,4 @@ dist
 Dockerfile
 .dockerignore
 docker-compose.yml
+.vercel

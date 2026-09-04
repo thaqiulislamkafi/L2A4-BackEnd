@@ -6,6 +6,7 @@ export const OrderRoute = Router();
 
 OrderRoute.get("/", OrderController.getAllOrders);
 OrderRoute.get("/user/:user_id",verifyAuth, OrderController.getOrdersByUser);
+OrderRoute.get("/provider/:provider_id",verifyAuth, OrderController.getOrdersByProvider);
 OrderRoute.get("/:id", OrderController.getOrderById);
 
 OrderRoute.post("/", OrderController.addOrder);
