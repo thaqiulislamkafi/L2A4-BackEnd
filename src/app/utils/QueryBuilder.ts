@@ -2,7 +2,15 @@
 
 
 type Tquery = Record<string, unknown>
+type AdvancedSearchField = {
+    field: string;
+    relation?: string;
+};
 
+type AdvancedFilter = {
+    field: string;
+    relation: string;
+};
 export class QueryBuilder {
 
     private query: Tquery;
@@ -33,6 +41,65 @@ export class QueryBuilder {
 
         return this
     }
+
+    advancedSearch(fields: AdvancedSearchField[]) {
+        if (!this.query.search) {
+            return this;
+        }
+
+        const searchTerm = String(this.query.search);
+
+        const conditions = fields.map(({ field, relation }) => {
+
+            if (!relation) {
+                return {
+                    [field]: {
+                        contains: searchTerm,
+                        mode: "insensitive"
+                    }
+                };
+            }
+
+            return {
+                [relation]: {
+                    [field]: {
+                        contains: searchTerm,
+                        mode: "insensitive"
+                    }
+                }
+            };
+        });
+
+        this.prismaQuery.where = {
+            ...this.prismaQuery.where,
+            OR: conditions
+        };
+
+        return this;
+    }
+
+    advancedFilter(filters: AdvancedFilter[]) {
+        filters.forEach(({ field, relation }) => {
+            const rawValue = this.query[field];
+
+            if (rawValue === undefined || rawValue === null) {
+                return;
+            }
+
+            const value = String(rawValue).replace(/^["']|["']$/g, "").trim();
+
+            if (!value || value.toUpperCase() === "ALL") {
+                return;
+            }
+
+            this.prismaQuery.where[relation] = {
+                [field]: value
+            };
+        });
+
+        return this;
+    }
+
 
     sort() {
         if (this.query.sort) {

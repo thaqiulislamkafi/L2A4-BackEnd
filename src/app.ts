@@ -16,6 +16,7 @@ import { FAQRoute } from "./app/modules/Faq/faq.route";
 import { DashboardStatsRoute } from "./app/modules/dashboardStats/dashboardStats.route";
 import { DashboardRoute } from "./app/modules/dashboard/dashboard.route";
 import { OrderItemsRoute } from "./app/modules/orderItems/orderItems.route";
+import { AppSettingRouter } from "./app/modules/AppSetting/appSetting.route";
 
 export const app = express() ;
 app.use(cors({
@@ -44,6 +45,8 @@ app.use('/api/faqs',FAQRoute) ;
 app.use('/api/dashboard',DashboardRoute) ;
 app.use('/api/dashboard-stats',DashboardStatsRoute) ;
 app.use('/api/auth',AuthRoute) ;
+
+app.use('/api/app-settings',AppSettingRouter);
 
 app.get('/',()=>{
     console.log(`Server is running`)

@@ -51,6 +51,12 @@ export const MealService = {
 
         const qb = new QueryBuilder(query)
             .search(['name'])
+            .advancedFilter([
+                {
+                    field: "category_name",
+                    relation: "category_rel"
+                }
+            ])
             .sort()
             .paginate()
 
@@ -195,7 +201,7 @@ export const MealService = {
                     mealId: id
                 }
             });
-            
+
             const result = await tx.meal.delete({
                 where: where
             })
