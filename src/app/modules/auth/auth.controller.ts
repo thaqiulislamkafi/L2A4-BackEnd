@@ -258,7 +258,7 @@ export const AuthController = {
         try {
 
             const { newEmail } = req.body;
-            await AuthService.requestEmailChangeOTP(newEmail,req);
+            await AuthService.requestEmailChangeOTP(newEmail, req);
 
             res.status(200).send({
                 success: true,

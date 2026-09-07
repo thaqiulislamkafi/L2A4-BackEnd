@@ -5,13 +5,14 @@ import { prisma } from "./prisma";
 import { SendingEmailToUser } from "../app/utils/sendEmail";
 import { emailOTP } from "better-auth/plugins";
 import { SendEmailVeification } from "../app/utils/SendEmailVerification";
+import { env } from "../config/env.config";
 // If your Prisma file is located elsewhere, you can change the path
-
 
 export const auth = betterAuth({
     database: prismaAdapter(prisma, {
         provider: "postgresql"
     }),
+    baseURL : env.BETTER_AUTH_URL,
     advanced : {
         defaultCookieAttributes :{
             sameSite : 'None',
@@ -28,6 +29,19 @@ export const auth = betterAuth({
         // sendVerificationEmail: async ({ user, url }) => {
         //     SendingEmailToUser(user.email, user.name, url);
         // },
+    },
+    socialProviders : {
+        google : {
+            clientId : env.GOOGLE_CLIENT_ID,
+            clientSecret : env.GOOGLE_CLIENT_SECRET,
+            prompt : "select_account",
+            disableImplicitSignUp : true
+        }
+    },
+    account : {
+        accountLinking : {
+            disableImplicitLinking : true
+        }
     },
     user: {
         additionalFields: {

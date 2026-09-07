@@ -15,7 +15,10 @@ const envSchema = z.object({
     CLOUDINARY_API_KEY: z.string().min(3, 'Cloudinary API Key is required'),
     CLOUDINARY_API_SECRET: z.string().min(3, 'Cloudinary API Secret is required'),
     BETTER_AUTH_SECRET: z.string().min(3, 'Better Auth Secret is required'),
-    BETTER_AUTH_URL: z.string().min(3, 'Better Auth URL is required')
+    BETTER_AUTH_URL: z.string().min(3, 'Better Auth URL is required'),
+    GOOGLE_CLIENT_ID: z.string().min(10,'Client Id must be min 10 characters'),
+    GOOGLE_CLIENT_SECRET: z.string().min(10,'Client secret must be min 10 characters'),
+    FRONTEND_URL: z.string('Frontend URL is required')
 })
 
 const parsedEnvSchema = envSchema.safeParse(process.env)

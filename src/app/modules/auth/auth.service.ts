@@ -9,6 +9,7 @@ import { DashboardStatsService } from "../dashboardStats/dashboardStats.service"
 import { getMonthAndDate } from "../../utils/getMonthAndDate";
 import { CartService } from "../cart/cart.service";
 import { User } from "../../../generated/prisma/client";
+import { env } from "../../../config/env.config";
 
 export const AuthService = {
 
@@ -197,7 +198,7 @@ export const AuthService = {
         return result;
     },
 
-     async requestEmailChangeOTP(newEmail: string, req: AuthRequest) {
+    async requestEmailChangeOTP(newEmail: string, req: AuthRequest) {
 
         const result = await auth.api.requestEmailChangeEmailOTP({
             body: {
