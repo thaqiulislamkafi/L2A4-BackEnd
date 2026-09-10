@@ -13,6 +13,20 @@ export const MealService = {
 
         const qb = new QueryBuilder(query)
             .search(['name'])
+            .advancedFilter([
+                {
+                    field: "category_name",
+                    relation: "category_rel"
+                },
+                {
+                    field: "cuisine_type_name",
+                    relation: "cuisine_rel"
+                },
+                {
+                    field: "dietry_type_name",
+                    relation: "dietry_rel"
+                },
+            ])
             .sort()
             .paginate()
 
@@ -55,7 +69,15 @@ export const MealService = {
                 {
                     field: "category_name",
                     relation: "category_rel"
-                }
+                },
+                {
+                    field: "cuisine_type_name",
+                    relation: "cuisine_rel"
+                },
+                {
+                    field: "dietry_type_name",
+                    relation: "dietry_rel"
+                },
             ])
             .sort()
             .paginate()
@@ -103,6 +125,20 @@ export const MealService = {
 
         const qb = new QueryBuilder(query)
             .search(['name'])
+            .advancedFilter([
+                {
+                    field: "category_name",
+                    relation: "category_rel"
+                },
+                {
+                    field: "cuisine_type_name",
+                    relation: "cuisine_rel"
+                },
+                {
+                    field: "dietry_type_name",
+                    relation: "dietry_rel"
+                },
+            ])
             .sort()
             .paginate()
 

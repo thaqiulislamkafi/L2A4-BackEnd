@@ -92,8 +92,11 @@ export class QueryBuilder {
                 return;
             }
 
-            this.prismaQuery.where[relation] = {
-                [field]: value
+            this.prismaQuery.where = {
+                ...this.prismaQuery.where,
+                [relation]: {
+                    [field]: value
+                }
             };
         });
 

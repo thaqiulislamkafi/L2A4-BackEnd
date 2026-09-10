@@ -3,7 +3,7 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
 import { SendingEmailToUser } from "../app/utils/sendEmail";
-import { emailOTP } from "better-auth/plugins";
+import { admin, emailOTP } from "better-auth/plugins";
 import { SendEmailVeification } from "../app/utils/SendEmailVerification";
 import { env } from "../config/env.config";
 // If your Prisma file is located elsewhere, you can change the path
@@ -86,6 +86,10 @@ export const auth = betterAuth({
             expiresIn : 300,
             allowedAttempts : 3,
             overrideDefaultEmailVerification : true
+        }),
+        admin({
+            defaultRole: "user",
+            adminRoles : ["admin"]
         })
     ]
 });

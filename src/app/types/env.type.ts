@@ -14,4 +14,7 @@ export interface envType {
     GOOGLE_CLIENT_ID: string;
     GOOGLE_CLIENT_SECRET: string;
     FRONTEND_URL: string;
+    ADMIN_EMAIL: string;
+    ADMIN_PASSWORD: string;
+    ADMIN_NAME: string;
 }

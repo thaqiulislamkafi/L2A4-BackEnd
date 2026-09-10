@@ -32,6 +32,10 @@ export const CartService = {
             
         })
 
+        if(!cart?.id){
+           return await this.addCart(userId)
+        }
+
         return cart
     },
 
