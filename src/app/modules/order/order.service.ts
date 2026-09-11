@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Order } from "../../../generated/prisma/client";
 import { prisma } from "../../../lib/prisma"
 import { OrderStatus } from "../../../prisma/enums";
 import { TransactionClient } from "../../types/transactionClient.type";
@@ -26,30 +27,6 @@ export const OrderService = {
 
             prisma.order.findMany({
                 ...prismaQuery,
-                include: {
-                    orderItems: {
-                        include: {
-                            meal: {
-                                select: {
-                                    id: true,
-                                    name: true,
-                                    image: true,
-                                    category_rel: true
-                                }
-                            },
-
-                        }
-                    },
-                    user: {
-                        select: {
-                            id: true,
-                            name: true,
-                            image: true,
-                            email: true
-                        }
-                    }
-
-                }
             }),
 
             prisma.order.count({
@@ -90,30 +67,6 @@ export const OrderService = {
             await prisma.order.findMany({
                 ...prismaQuery,
                 where: conditionWhere,
-                include: {
-                    orderItems: {
-                        include: {
-                            meal: {
-                                select: {
-                                    id: true,
-                                    name: true,
-                                    image: true,
-                                    category_rel: true
-                                }
-                            },
-
-                        }
-                    },
-                    user: {
-                        select: {
-                            id: true,
-                            name: true,
-                            image: true,
-                            email: true
-                        }
-                    }
-
-                }
             }),
 
             await prisma.order.count({
@@ -131,6 +84,47 @@ export const OrderService = {
             }
         }
     },
+
+    async getOrdersByProvider(provider_id: string, query: Record<string, unknown>) {
+
+        const qb = new QueryBuilder(query)
+            .search(['id'])
+            .sort()
+            .paginate()
+
+        const prismaQuery = qb.build();
+
+        const page = Number(query.page) || 1;
+        const limit = Number(query.limit) || 10;
+
+        const conditionWhere = {
+            ...prismaQuery.where,
+            provider_id
+        }
+
+        const [result, total] = await Promise.all([
+
+            await prisma.order.findMany({
+                ...prismaQuery,
+                where: conditionWhere,
+            }),
+
+            await prisma.order.count({
+                where: conditionWhere
+            })
+        ])
+
+        return {
+            data: result,
+            meta: {
+                page,
+                limit,
+                total,
+                totalPage: Math.ceil(total / limit)
+            }
+        }
+    },
+
 
     async getOrderById(id: string, tx: TransactionClient = prisma) {
 
@@ -167,11 +161,11 @@ export const OrderService = {
         return order;
     },
 
-    async addOrder(userId: string) {
+    async addOrder(data:Order) {
 
         return prisma.$transaction(async (tx) => {
 
-            const cartItems = await CartItemService.getCartItemByUserId(userId, tx);
+            const cartItems = await CartItemService.getCartItemByUserId(data.user_id, tx);
 
             if (cartItems.length === 0) {
                 throw new Error("Cart is empty");
@@ -179,7 +173,7 @@ export const OrderService = {
 
             const order = await tx.order.create({
                 data: {
-                    user_id: userId,
+                    ...data,
                     total_price: cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
                 }
             });

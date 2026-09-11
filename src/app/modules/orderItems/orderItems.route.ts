@@ -7,6 +7,9 @@ OrderItemsRoute.get("/",OrderItemsController.getAllOrderItems);
 OrderItemsRoute.get("/meal/:mealId",OrderItemsController.getOrderItemsByMealId);
 
 OrderItemsRoute.get("/order/:orderId",OrderItemsController.getOrderItemByOrderId);
+OrderItemsRoute.get("/provider/:providerId",OrderItemsController.getOrderItemsByProviderId);
+OrderItemsRoute.get("/user/:userId",OrderItemsController.getOrderItemsByUserId);
+
 OrderItemsRoute.get("/:id",OrderItemsController.getOrderItem);
 
 OrderItemsRoute.delete("/order/:orderId",OrderItemsController.cancelOrderItems);
