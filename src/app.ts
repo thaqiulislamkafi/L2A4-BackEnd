@@ -12,14 +12,24 @@ import { ReviewsRoute } from "./app/modules/reviews/reviews.route";
 import { GlobalReviewsRoute } from "./app/modules/globalReviews/globalReviews.route";
 import { AuthRoute } from "./app/modules/auth/auth.route";
 import { CartRoute } from "./app/modules/cart/cart.route";
+import { FAQRoute } from "./app/modules/Faq/faq.route";
+import { DashboardStatsRoute } from "./app/modules/dashboardStats/dashboardStats.route";
+import { DashboardRoute } from "./app/modules/dashboard/dashboard.route";
+import { OrderItemsRoute } from "./app/modules/orderItems/orderItems.route";
+import { AppSettingRouter } from "./app/modules/AppSetting/appSetting.route";
+import { toNodeHandler } from "better-auth/node";
+import { auth } from "./lib/auth";
 
 export const app = express() ;
-app.use(cors()) ;
+app.use(cors({
+    origin : ['http://localhost:3000','http://localhost:6001','https://l2-a4-frontend-one.vercel.app'],
+    credentials : true
+})) ;
+
+app.all("/api/auth/*splat", toNodeHandler(auth));
+
 app.use(express.json()) ;
 
-const PORT = process.env.PORT || 5000 ;
-
-// app.all("/api/auth/*splat", toNodeHandler(auth));
 
 app.use('/api/cuisine-types',CuisineTypeRoute) ;
 app.use('/api/categories',CategoriesRoute) ;
@@ -27,21 +37,25 @@ app.use('/api/dietry-types',DietryTypeRoute) ;
 
 app.use('/api/meals',MealRoute) ;
 app.use('/api/orders',OrderRoute) ;
+app.use('/api/order-items',OrderItemsRoute) ;
+
 
 app.use('/api/carts',CartRoute) ;
 app.use('/api/cart-items',CartItemRoute) ;
 app.use('/api/reviews',ReviewsRoute) ;
 app.use('/api/global-reviews',GlobalReviewsRoute) ;
 
-app.use('/api/auth',AuthRoute) ;
+app.use('/api/faqs',FAQRoute) ;
+app.use('/api/dashboard',DashboardRoute) ;
+app.use('/api/dashboard-stats',DashboardStatsRoute) ;
+app.use('/api/auth-manage',AuthRoute) ;
 
-app.use(NotFound) ;
-app.use(GlobalHandleError);
+
+app.use('/api/app-settings',AppSettingRouter);
 
 app.get('/',()=>{
     console.log(`Server is running`)
 })
 
-app.listen(PORT,()=>{
-    console.log(`Server is running in the port ${PORT}`)
-})
+app.use(NotFound) ;
+app.use(GlobalHandleError);

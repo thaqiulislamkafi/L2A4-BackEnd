@@ -8,6 +8,8 @@ import { QueryBuilder } from "../../utils/QueryBuilder";
 import { DashboardStatsService } from "../dashboardStats/dashboardStats.service";
 import { getMonthAndDate } from "../../utils/getMonthAndDate";
 import { CartService } from "../cart/cart.service";
+import { User } from "../../../generated/prisma/client";
+import { env } from "../../../config/env.config";
 
 export const AuthService = {
 
@@ -62,18 +64,11 @@ export const AuthService = {
 
         const date = await getMonthAndDate(String(result.response.user.createdAt));
 
-        return await prisma.$transaction(async (tx) => {
+        if (result.response.user.role === "user") {
+            await CartService.addCart(result.response.user.id);
+        }
 
-            if (result.response.user.role === 'user') {
-                await DashboardStatsService.incrementUsersJoined(date.year, date.month,tx);
-                await CartService.addCart(result.response.user.id,tx);
-            }
-            else if (result.response.user.role === 'provider') {
-                await DashboardStatsService.incrementProvidersJoined(date.year, date.month,tx);
-            }
-
-            return result;
-        })
+        return result;
     },
 
     async SignIn(data: any, req: AuthRequest) {
@@ -95,6 +90,17 @@ export const AuthService = {
         });
 
         return result;
+    },
+
+    async GetMe(req: AuthRequest) {
+
+        const session = await auth.api.getSession({
+            headers: fromNodeHeaders(req.headers)
+        })
+
+        if (!session) throw new Error('Not Authenticated');
+
+        return session
     },
 
     async changePassword(data: { password: string; newPassword: string }, req: AuthRequest) {
@@ -135,7 +141,7 @@ export const AuthService = {
         return result;
     },
 
-    async verifyOtp(email: string, otp: string) {
+    async verifyOtpForForgetPassword(email: string, otp: string) {
 
         const result = await auth.api.checkVerificationOTP({
             body: {
@@ -161,12 +167,72 @@ export const AuthService = {
         return result
     },
 
+    async sendOtpForEmailVerification(email: string) {
+
+        const result = await auth.api.sendVerificationOTP({
+            body: {
+                email,
+                type: "email-verification",
+            },
+        });
+
+        return result;
+    },
+
+    async verifyOtpForEmailVerification(email: string, otp: string) {
+
+        const result = await auth.api.verifyEmailOTP({
+            body: {
+                email,
+                otp,
+            },
+        });
+
+        return result;
+    },
+
+    async requestEmailChangeOTP(newEmail: string, req: AuthRequest) {
+
+        const result = await auth.api.requestEmailChangeEmailOTP({
+            body: {
+                newEmail,
+            },
+            headers: fromNodeHeaders(req.headers)
+        });
+
+        return result;
+    },
+
+    async ChangeEmailByOTP(newEmail: string, otp: string, req: AuthRequest) {
+
+        const result = await auth.api.changeEmailEmailOTP({
+            body: {
+                newEmail,
+                otp
+            },
+            headers: fromNodeHeaders(req.headers)
+        });
+
+        return result;
+    },
+
     async logOutAllSessions(req: AuthRequest) {
 
         const result = await auth.api.revokeOtherSessions({
             headers: fromNodeHeaders(req.headers),
         });
 
+        return result;
+    },
+
+    async updateUser(userId: string, data: Partial<User>) {
+
+        const result = await prisma.user.update({
+            where: {
+                id: userId
+            },
+            data: data
+        });
         return result;
     },
 

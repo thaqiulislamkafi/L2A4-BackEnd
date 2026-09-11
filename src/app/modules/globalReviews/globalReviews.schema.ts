@@ -4,6 +4,8 @@ import { z } from "zod";
 
 export const addGlobalReviewSchema = z.object({
 
+    user_id : z.string("user id must be string"),
+
     rating: z.number("Rating is required")
         .int("Rating must be an integer")
         .min(1, "Rating must be at least 1")
@@ -27,4 +29,3 @@ export const updateGlobalReviewSchema = z.object({
         .max(500, "Comment cannot exceed 500 characters")
         .optional()
 });
-

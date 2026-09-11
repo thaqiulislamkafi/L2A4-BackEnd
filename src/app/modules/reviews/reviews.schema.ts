@@ -4,6 +4,7 @@ import { z } from "zod";
 export const addReviewSchema = z.object({
     
     user_id: z.string("User ID is required"),
+    meal_id: z.string("Meal ID is required"),
     rating: z.number("Rating is required")
         .int("Rating must be an integer")
         .min(1, "Rating must be at least 1")

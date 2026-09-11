@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { CartItemService } from "./cartItem.service";
+import { CartItem } from "../../../generated/prisma/client";
 
 export const CartItemController = {
 
@@ -54,7 +55,7 @@ export const CartItemController = {
     async addCartItem(req: Request, res: Response, next: NextFunction) {
 
         try {
-            const data = req.body;
+            const data:CartItem = req.body;
             const cartItem = await CartItemService.addCartItem(data);
             res.status(201).send({
                 success: true,

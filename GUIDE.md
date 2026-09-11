@@ -469,3 +469,319 @@ const { data, error } = await authClient.emailOtp.resetPassword({
 4. **Allowed attempts** - OTP invalidates after max attempts exceeded
 
 That's it! The Email OTP plugin handles token generation, storage, verification, and expiration automatically.
+
+Here is the complete server-side manual code for changing email with Better Auth, Prisma, and Express:
+
+## 1. Auth Configuration for Email Change
+
+```typescript
+// src/lib/auth.ts
+import { betterAuth } from "better-auth";
+import { prismaAdapter } from "better-auth/adapters/prisma";
+import { emailOTP } from "better-auth/plugins"; // Optional: for OTP-based change
+import { prisma } from "./prisma";
+
+export const auth = betterAuth({
+  database: prismaAdapter(prisma, {
+    provider: "postgresql",
+  }),
+  
+  // Enable email change feature
+  user: {
+    changeEmail: {
+      enabled: true,
+      
+      // Require confirmation from current email before changing
+      sendChangeEmailConfirmation: async ({ user, newEmail, url, token }, request) => {
+        await sendEmail({
+          to: user.email, // Current email
+          subject: "Approve Email Change",
+          text: `Click to approve changing your email to ${newEmail}: ${url}`,
+        });
+      },
+      
+      // Allow immediate update if current email is not verified
+      updateEmailWithoutVerification: false, // Set true to skip verification
+    },
+  },
+  
+  // Required for sending verification to new email
+  emailVerification: {
+    sendVerificationEmail: async ({ user, url, token }, request) => {
+      await sendEmail({
+        to: user.email,
+        subject: "Verify Your New Email",
+        text: `Click to verify: ${url}`,
+      });
+    },
+  },
+  
+  // Optional: OTP plugin for OTP-based email change
+  plugins: [
+    emailOTP({
+      changeEmail: {
+        enabled: true,
+        verifyCurrentEmail: true, // Require OTP on current email first
+      },
+      async sendVerificationOTP({ email, otp, type }) {
+        await sendEmail({
+          to: email,
+          subject: type === "change-email" ? "Confirm Email Change" : "Verification Code",
+          text: `Your code: ${otp}`,
+        });
+      },
+    }),
+  ],
+});
+```
+
+## 2. Express Server with Email Change Endpoints
+
+```typescript
+// src/server.ts
+import express from "express";
+import { toNodeHandler, fromNodeHeaders } from "better-auth/node";
+import { auth } from "./lib/auth";
+import { APIError, isAPIError } from "better-auth/api";
+import { prisma } from "./lib/prisma";
+
+const app = express();
+
+app.all("/api/auth/*", toNodeHandler(auth));
+app.use(express.json());
+
+// ============================================
+// CHANGE EMAIL (SERVER-SIDE)
+// ============================================
+
+/**
+ * 1. INITIATE EMAIL CHANGE (with verification link)
+ * POST /api/change-email
+ * 
+ * Sends verification email to new address.
+ * User must click link to complete change.
+ */
+app.post("/api/change-email", async (req, res) => {
+  try {
+    const { newEmail, callbackURL } = req.body;
+    
+    // Get session from request headers
+    const headers = fromNodeHeaders(req.headers);
+    
+    const result = await auth.api.changeEmail({
+      body: {
+        newEmail,
+        callbackURL: callbackURL || "/dashboard",
+      },
+      headers, // Session required
+    });
+    
+    res.json({
+      success: true,
+      message: "Verification email sent to new address",
+      user: result,
+    });
+  } catch (error) {
+    if (isAPIError(error)) {
+      res.status(error.status).json({
+        error: error.message,
+        code: error.status,
+      });
+    } else {
+      res.status(500).json({ error: "Failed to initiate email change" });
+    }
+  }
+});
+
+/**
+ * 2. CHANGE EMAIL WITH OTP (Email OTP Plugin)
+ * POST /api/change-email/otp/request
+ * 
+ * Step 1: Request OTP for current email verification
+ */
+app.post("/api/change-email/otp/request-current", async (req, res) => {
+  try {
+    const { email } = req.body;
+    
+    // Send OTP to current email
+    const result = await auth.api.sendVerificationOTP({
+      body: {
+        email,
+        type: "email-verification",
+      },
+    });
+    
+    res.json({
+      success: true,
+      message: "OTP sent to current email",
+    });
+  } catch (error) {
+    if (isAPIError(error)) {
+      res.status(error.status).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: "Failed to send OTP" });
+    }
+  }
+});
+
+/**
+ * Step 2: Request email change after verifying current email
+ * POST /api/change-email/otp/request-change
+ */
+app.post("/api/change-email/otp/request-change", async (req, res) => {
+  try {
+    const { newEmail, otp } = req.body;
+    const headers = fromNodeHeaders(req.headers);
+    
+    const result = await auth.api.requestEmailChangeEmailOTP({
+      body: {
+        newEmail,
+        otp, // OTP from current email (if verifyCurrentEmail is enabled)
+      },
+      headers, // Session required
+    });
+    
+    res.json({
+      success: true,
+      message: "OTP sent to new email address",
+    });
+  } catch (error) {
+    if (isAPIError(error)) {
+      res.status(error.status).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: "Failed to request email change" });
+    }
+  }
+});
+
+/**
+ * Step 3: Confirm email change with OTP from new email
+ * POST /api/change-email/otp/confirm
+ */
+app.post("/api/change-email/otp/confirm", async (req, res) => {
+  try {
+    const { newEmail, otp } = req.body;
+    const headers = fromNodeHeaders(req.headers);
+    
+    const result = await auth.api.changeEmailEmailOTP({
+      body: {
+        newEmail,
+        otp, // OTP sent to new email
+      },
+      headers, // Session required
+    });
+    
+    res.json({
+      success: true,
+      message: "Email changed successfully",
+      user: result,
+    });
+  } catch (error) {
+    if (isAPIError(error)) {
+      res.status(error.status).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: "Failed to change email" });
+    }
+  }
+});
+
+/**
+ * 3. DIRECT EMAIL UPDATE (Admin only - skips verification)
+ * POST /api/admin/change-email
+ */
+app.post("/api/admin/change-email", async (req, res) => {
+  try {
+    const { userId, newEmail } = req.body;
+    
+    // Verify admin privileges here!
+    // const session = await auth.api.getSession({ headers: fromNodeHeaders(req.headers) });
+    // if (!isAdmin(session.user)) return res.status(403).json({ error: "Unauthorized" });
+    
+    // Direct database update
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        email: newEmail,
+        emailVerified: new Date(), // Auto-verify when admin changes
+      },
+    });
+    
+    res.json({
+      success: true,
+      message: "Email updated by admin",
+      user: {
+        id: updatedUser.id,
+        email: updatedUser.email,
+        emailVerified: updatedUser.emailVerified,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update email" });
+  }
+});
+
+/**
+ * 4. VERIFY EMAIL CHANGE TOKEN (Manual)
+ * GET /api/verify-change-email
+ * 
+ * Usually handled by /api/auth/verify-email automatically
+ */
+app.get("/api/verify-change-email", async (req, res) => {
+  try {
+    const { token, callbackURL } = req.query;
+    
+    const result = await auth.api.verifyEmail({
+      query: {
+        token: token as string,
+        callbackURL: (callbackURL as string) || "/",
+      },
+    });
+    
+    res.json({
+      success: true,
+      message: "Email verified and updated",
+      user: result.user,
+    });
+  } catch (error) {
+    if (isAPIError(error)) {
+      res.status(error.status).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: "Verification failed" });
+    }
+  }
+});
+
+/**
+ * 5. GET EMAIL CHANGE STATUS
+ * GET /api/email-status
+ */
+app.get("/api/email-status", async (req, res) => {
+  try {
+    const headers = fromNodeHeaders(req.headers);
+    const session = await auth.api.getSession({ headers });
+    
+    if (!session) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+    
+    res.json({
+      currentEmail: session.user.email,
+      emailVerified: !!session.user.emailVerified,
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to get status" });
+  }
+});
+
+app.listen(3000, () => {
+  console.log("Server running on port 3000");
+});
+```
+
+## 3. Usage Examples
+
+### Standard Email Change (with verification link)
+
+```typescript
+// Step 1: Request
+```

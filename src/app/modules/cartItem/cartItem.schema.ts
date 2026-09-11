@@ -3,7 +3,6 @@ import { z } from "zod";
 
 export const addCartItemSchema = z.object({
 
-    cart_id: z.string("Cart ID is required"),
     meal_id: z.string("Meal ID is required"),
     user_id: z.string("User ID is required"),
     quantity: z.number()
@@ -18,7 +17,6 @@ export const addCartItemSchema = z.object({
 
 export const updateCartItemSchema = z.object({
 
-    cart_id: z.string().optional(),
     meal_id: z.string().optional(),
     user_id : z.string().optional(),
     quantity: z.number()
