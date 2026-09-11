@@ -2,32 +2,24 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from "express";
 import { Prisma } from "../../generated/prisma/client";
+import { handlePrismaError } from "../utils/prismaErrorHandler";
 
 
 export const GlobalHandleError = (err: any, req: Request, res: Response, next: NextFunction) => {
 
     let statusCode: number = 500;
     let errorMessage: string = 'Internal Server Error';
-    const errorDetails = err;
 
-    if ((err) instanceof Prisma.PrismaClientKnownRequestError) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+        const prismaError = handlePrismaError(err);
 
-        if (err.code === 'P2025') {
-            errorMessage = "Record Not Found"
-        }
-
-        else if (err.code === 'P2003') {
-            errorMessage = `Foreign key constraint Failed `
-        }
-
-        else if (err.code === 'P2002') {
-            errorMessage = `Unique constraint failed on the constraint`
-        }
+        statusCode = prismaError.statusCode;
+        errorMessage = prismaError.message;
     }
 
-    else if ((err) instanceof Prisma.PrismaClientValidationError) {
-        errorMessage = "Field doesn't match"
-
+    else if (err instanceof Prisma.PrismaClientValidationError) {
+        statusCode = 400;
+        errorMessage = "Invalid data provided.";
     }
 
     else if (err instanceof Error) {
@@ -35,11 +27,9 @@ export const GlobalHandleError = (err: any, req: Request, res: Response, next: N
         errorMessage = err.message;
     }
 
-    console.log(err)
     res.status(statusCode).send({
         success: false,
         errorCode: err.code,
         message: errorMessage,
-        error: errorDetails
     })
 }

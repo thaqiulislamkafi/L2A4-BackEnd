@@ -64,18 +64,11 @@ export const AuthService = {
 
         const date = await getMonthAndDate(String(result.response.user.createdAt));
 
-        return await prisma.$transaction(async (tx) => {
+        if (result.response.user.role === "user") {
+            await CartService.addCart(result.response.user.id);
+        }
 
-            if (result.response.user.role === 'user') {
-                await DashboardStatsService.incrementUsersJoined(date.year, date.month, tx);
-                await CartService.addCart(result.response.user.id, tx);
-            }
-            else if (result.response.user.role === 'provider') {
-                await DashboardStatsService.incrementProvidersJoined(date.year, date.month, tx);
-            }
-
-            return result;
-        })
+        return result;
     },
 
     async SignIn(data: any, req: AuthRequest) {

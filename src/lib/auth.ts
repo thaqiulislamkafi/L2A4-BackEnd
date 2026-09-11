@@ -6,41 +6,45 @@ import { SendingEmailToUser } from "../app/utils/sendEmail";
 import { admin, emailOTP } from "better-auth/plugins";
 import { SendEmailVeification } from "../app/utils/SendEmailVerification";
 import { env } from "../config/env.config";
+import { DashboardStatsService } from "../app/modules/dashboardStats/dashboardStats.service";
+import { getMonthAndDate } from "../app/utils/getMonthAndDate";
 // If your Prisma file is located elsewhere, you can change the path
 
 export const auth = betterAuth({
     database: prismaAdapter(prisma, {
         provider: "postgresql"
     }),
-    baseURL : env.BETTER_AUTH_URL,
-    advanced : {
-        defaultCookieAttributes :{
-            sameSite : 'None',
-            secure : true,
-            httpOnly : true
+    baseURL: env.BETTER_AUTH_URL,
+    advanced: {
+        defaultCookieAttributes: {
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
         }
     },
-    trustedOrigins: ['http://localhost:4000', 'http://localhost:3000','https://l2-a4-frontend-one.vercel.app'],
+    trustedOrigins: ['http://localhost:4000', 'http://localhost:3000', 'https://l2-a4-frontend-one.vercel.app'],
     emailAndPassword: {
         enabled: true,
         sendResetPassword: async ({ user, url, token }, request) => {
-            void SendingEmailToUser(user.email,user.name,url);
+            void SendingEmailToUser(user.email, user.name, url);
         },
         // sendVerificationEmail: async ({ user, url }) => {
         //     SendingEmailToUser(user.email, user.name, url);
         // },
     },
-    socialProviders : {
-        google : {
-            clientId : env.GOOGLE_CLIENT_ID,
-            clientSecret : env.GOOGLE_CLIENT_SECRET,
-            prompt : "select_account",
-            disableImplicitSignUp : true
+    socialProviders: {
+        google: {
+            clientId: env.GOOGLE_CLIENT_ID,
+            clientSecret: env.GOOGLE_CLIENT_SECRET,
+            prompt: "select_account",
+            disableImplicitSignUp: true
         }
     },
-    account : {
-        accountLinking : {
-            disableImplicitLinking : true
+    account: {
+        accountLinking: {
+            enabled: true,
+            trustedProviders: ["google"],
+            allowDifferentEmails: false
         }
     },
     user: {
@@ -54,42 +58,64 @@ export const auth = betterAuth({
                 type: "string",
                 defaultValue: "active"
             },
-            contact : {
-                type : "string",
-                defaultValue : ''
+            contact: {
+                type: "string",
+                defaultValue: ''
             },
-            age : {
-                type : 'number'
+            age: {
+                type: 'number'
             },
-            address : {
-                type : "string"
+            address: {
+                type: "string"
             }
         }
     },
-    plugins : [
+    databaseHooks: {
+        user: {
+            create: {
+                after: async (user) => {
+
+                    try {
+                        const date = await getMonthAndDate(String(user.createdAt));
+
+                        if (user.role === 'user') {
+
+                            await DashboardStatsService.incrementUsersJoined(date.year, date.month);
+                        }
+                        else if (user.role === 'provider') {
+                            await DashboardStatsService.incrementProvidersJoined(date.year, date.month);
+                        }
+                    } catch (error) {
+                        console.log("Failed to update dashboard statistics", error)
+                    }
+                }
+            }
+        }
+    },
+    plugins: [
         emailOTP({
-            changeEmail:{
-                enabled : true
+            changeEmail: {
+                enabled: true
             },
-            async sendVerificationOTP({email,otp,type}){
-                if(type == 'forget-password'){
-                    SendEmailVeification(email,'Dear User',otp)
+            async sendVerificationOTP({ email, otp, type }) {
+                if (type == 'forget-password') {
+                    SendEmailVeification(email, 'Dear User', otp)
                 }
-                else if(type == 'email-verification'){
-                    SendEmailVeification(email,'Dear User',otp)
+                else if (type == 'email-verification') {
+                    SendEmailVeification(email, 'Dear User', otp)
                 }
-                else if(type=='change-email'){
-                    SendEmailVeification(email,'Dear User',otp)
+                else if (type == 'change-email') {
+                    SendEmailVeification(email, 'Dear User', otp)
                 }
             },
-            otpLength : 6,
-            expiresIn : 300,
-            allowedAttempts : 3,
-            overrideDefaultEmailVerification : true
+            otpLength: 6,
+            expiresIn: 300,
+            allowedAttempts: 3,
+            overrideDefaultEmailVerification: true
         }),
         admin({
             defaultRole: "user",
-            adminRoles : ["admin"]
+            adminRoles: ["admin"]
         })
     ]
 });
