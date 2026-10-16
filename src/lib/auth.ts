@@ -115,7 +115,8 @@ export const auth = betterAuth({
         }),
         admin({
             defaultRole: "user",
-            adminRoles: ["admin"]
+            adminRoles: ["admin"],
+            bannedUserMessage : "Your account has been banned. Please contact support for assistance.",
         })
     ]
 });

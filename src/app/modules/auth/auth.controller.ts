@@ -334,6 +334,36 @@ export const AuthController = {
         }
     },
 
+    async banUser(req: AuthRequest, res: Response, next: NextFunction) {
+
+        try {
+            const user_id = req.params.id;
+            const result = await AuthService.banUser(req, String(user_id));
+            return res.status(200).json({
+                success: true,
+                message: 'User banned successfully',
+                data: result
+            });
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    async unbanUser(req: AuthRequest, res: Response, next: NextFunction) {
+
+        try {
+            const user_id = req.params.id;
+            const result = await AuthService.unbanUser(req, String(user_id));
+            return res.status(200).json({
+                success: true,
+                message: 'User unbanned successfully',
+                data: result
+            });
+        } catch (error) {
+            next(error)
+        }
+    },
+
     async deleteAllUsers(req: AuthRequest, res: Response, next: NextFunction) {
 
         try {

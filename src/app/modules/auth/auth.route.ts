@@ -32,4 +32,7 @@ AuthRoute.post('/otp-change-email',AuthController.requestEmailChangeOTP) ;
 AuthRoute.post('/logout-all',AuthController.logOutAllSessions) ;
 AuthRoute.put('/:id',validate(updateUserSchema),AuthController.updateUser) ;
 AuthRoute.delete('/:id',AuthController.deleteUser) ;
+
+AuthRoute.post('/ban-user/:id',AuthController.banUser) ;
+AuthRoute.post('/unban-user/:id',AuthController.unbanUser) ;
 AuthRoute.delete('/',AuthController.deleteAllUsers) ;

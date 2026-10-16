@@ -253,6 +253,26 @@ export const AuthService = {
         })
     },
 
+    async banUser(req: AuthRequest,userId: string) {
+
+        return auth.api.banUser({
+            body: {
+                userId,
+            },
+            headers: fromNodeHeaders(req.headers)
+        });
+    },
+
+    async unbanUser(req: AuthRequest,userId: string) {
+
+        return auth.api.unbanUser({
+            body: {
+                userId,
+            },
+            headers: fromNodeHeaders(req.headers)
+        });
+    },
+
     async deleteAllUsers() {
 
         const result = await prisma.user.deleteMany();
