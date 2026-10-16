@@ -21,6 +21,20 @@ export const AuthController = {
         }
     },
 
+    async getAllProviders(req: AuthRequest, res: Response, next: NextFunction) {
+
+        try {
+            const result = await AuthService.getAllProviders(req.query);
+            res.status(200).json({
+                success: true,
+                message: 'Providers data is successfully retreived',
+                ...result,
+            });
+        } catch (error) {
+            next(error)
+        }
+    },
+
     async getUserById(req: AuthRequest, res: Response, next: NextFunction) {
 
         try {

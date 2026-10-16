@@ -8,6 +8,7 @@ import { mealUpload } from "../../../config/multerCloudinary";
 export const AuthRoute = Router();
 
 AuthRoute.get('/',AuthController.getAllUsers) ;
+AuthRoute.get('/providers',AuthController.getAllProviders) ;
 AuthRoute.get('/:id',AuthController.getUserById) ;
 AuthRoute.post('/image-upload',mealUpload.single('file'),AuthController.uploadUserImage);
 

@@ -46,6 +46,46 @@ export const AuthService = {
         }
     },
 
+    async getAllProviders(query: Record<string, unknown>) {
+
+        const qb = new QueryBuilder(query)
+            .search(['email', 'name'])
+            .sort()
+            .paginate()
+
+        
+        const prismaQuery = qb.build();
+
+        const page = Number(query.page) || 1;
+        const limit = Number(query.limit) || 10;
+
+        const [result, total] = await Promise.all([
+
+            prisma.user.findMany({
+                ...prismaQuery,
+                where: {
+                    ...prismaQuery.where,
+                    role: 'provider'
+                }
+            }),
+            prisma.user.count({
+                where: {
+                    ...prismaQuery.where,
+                    role: 'provider'
+                }
+            })
+        ]);
+        return {
+            data: result,
+            meta: {
+                page,
+                limit,
+                total,
+                totalPage: Math.ceil(total / limit)
+            }
+        }
+    },
+
     async getUserById(id: string) {
 
         const result = await prisma.user.findUnique({
