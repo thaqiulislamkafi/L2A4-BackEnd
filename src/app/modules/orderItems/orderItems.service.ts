@@ -12,6 +12,7 @@ export const OrderItemsService = {
         const qb = new QueryBuilder(query)
             .sort()
             .paginate()
+            .search(['id', 'order_id'])
 
         const prismaQuery = qb.build();
 
@@ -53,6 +54,7 @@ export const OrderItemsService = {
         const qb = new QueryBuilder(query)
             .sort()
             .paginate()
+            .search(['id', 'order_id'])
 
         const prismaQuery = qb.build();
 
@@ -108,7 +110,8 @@ export const OrderItemsService = {
     async getOrderItemsByProviderId(providerId: string, query: Record<string, unknown>) {
         const qb = new QueryBuilder(query)
             .sort()
-            .paginate();
+            .paginate()
+            .search(['id', 'order_id']);
 
         const prismaQuery = qb.build();
 
@@ -158,7 +161,8 @@ export const OrderItemsService = {
 
         const qb = new QueryBuilder(query)
             .sort()
-            .paginate();
+            .paginate()
+            .search(['id', 'order_id']);
 
         const prismaQuery = qb.build();
 
