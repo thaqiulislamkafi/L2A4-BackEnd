@@ -6,29 +6,21 @@ import { getMonthAndDate } from "../../utils/getMonthAndDate";
 import { QueryBuilder } from "../../utils/QueryBuilder";
 import { DashboardStatsService } from "../dashboardStats/dashboardStats.service";
 import { MealAnalyticsService } from "../mealAnalytics/mealAnalytics.service";
+import { MealMapper } from "./meals.mapper";
 
 export const MealService = {
 
     async getMeals(query: Record<string, unknown>) {
-
+        
         const qb = new QueryBuilder(query)
-            .search(['name'])
+            .search(["name"])
             .advancedFilter([
-                {
-                    field: "category_name",
-                    relation: "category_rel"
-                },
-                {
-                    field: "cuisine_type_name",
-                    relation: "cuisine_rel"
-                },
-                {
-                    field: "dietry_type_name",
-                    relation: "dietry_rel"
-                },
+                { field: "category_name", relation: "category_rel" },
+                { field: "cuisine_type_name", relation: "cuisine_rel" },
+                { field: "dietry_type_name", relation: "dietry_rel" }
             ])
             .sort()
-            .paginate()
+            .paginate();
 
         const prismaQuery = qb.build();
 
@@ -36,9 +28,11 @@ export const MealService = {
         const limit = Number(query.limit) || 10;
 
         const [result, total] = await Promise.all([
-
             prisma.meal.findMany({
-                ...prismaQuery,
+                where: prismaQuery.where,
+                orderBy: prismaQuery.orderBy,
+                skip: prismaQuery.skip,
+                take: prismaQuery.take,
                 include: {
                     cuisine_rel: true,
                     dietry_rel: true,
@@ -51,14 +45,14 @@ export const MealService = {
         ]);
 
         return {
-            data: result,
+            data: MealMapper.toList(result),
             meta: {
                 page,
                 limit,
                 total,
                 totalPage: Math.ceil(total / limit)
             }
-        }
+        };
     },
 
     async getPublishedMeals(query: Record<string, unknown>) {
