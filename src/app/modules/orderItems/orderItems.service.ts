@@ -18,7 +18,7 @@ export const OrderItemsService = {
         const prismaQuery = qb.build();
 
         const page = Number(query.page) || 1;
-        const limit = Number(query.limit) || 10;
+        const limit = Math.min(Number(query.limit) || 6, 10);
 
         const [result, total] = await Promise.all([
 
@@ -62,7 +62,7 @@ export const OrderItemsService = {
         };
 
         const page = Number(query.page) || 1;
-        const limit = Number(query.limit) || 10;
+        const limit = Math.min(Number(query.limit) || 6, 10);
 
         const [result, total] = await Promise.all([
 
@@ -107,7 +107,7 @@ export const OrderItemsService = {
         };
 
         const page = Number(query.page) || 1;
-        const limit = Number(query.limit) || 10;
+        const limit = Math.min(Number(query.limit) || 6, 10);
 
         const [result, total] = await Promise.all([
 
@@ -153,7 +153,7 @@ export const OrderItemsService = {
         };
 
         const page = Number(query.page) || 1;
-        const limit = Number(query.limit) || 10;
+        const limit = Math.min(Number(query.limit) || 6, 10);
 
         const [result, total] = await Promise.all([
             prisma.orderItem.findMany({
@@ -199,7 +199,7 @@ export const OrderItemsService = {
         };
 
         const page = Number(query.page) || 1;
-        const limit = Number(query.limit) || 10;
+        const limit = Math.min(Number(query.limit) || 6, 10);
 
         const [result, total] = await Promise.all([
 

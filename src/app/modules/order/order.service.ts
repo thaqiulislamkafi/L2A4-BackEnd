@@ -21,7 +21,7 @@ export const OrderService = {
         const prismaQuery = qb.build();
 
         const page = Number(query.page) || 1;
-        const limit = Number(query.limit) || 10;
+        const limit = Math.min(Number(query.limit) || 6, 10);
 
         const [result, total] = await Promise.all([
 
@@ -55,7 +55,8 @@ export const OrderService = {
         const prismaQuery = qb.build();
 
         const page = Number(query.page) || 1;
-        const limit = Number(query.limit) || 10;
+        const limit = Math.min(Number(query.limit) || 6, 10);
+
 
         const conditionWhere = {
             ...prismaQuery.where,
@@ -95,7 +96,8 @@ export const OrderService = {
         const prismaQuery = qb.build();
 
         const page = Number(query.page) || 1;
-        const limit = Number(query.limit) || 10;
+        const limit = Math.min(Number(query.limit) || 6, 10);
+
 
         const conditionWhere = {
             ...prismaQuery.where,

@@ -8,6 +8,7 @@ import { MealAnalyticsService } from "../mealAnalytics/mealAnalytics.service"
 import { ReviewMapper } from "./reviews.mapper"
 
 export const ReviewsService = {
+
     async getReviews(query: Record<string, unknown>) {
 
         const qb = new QueryBuilder(query)
@@ -17,7 +18,7 @@ export const ReviewsService = {
         const prismaQuery = qb.build();
 
         const page = Number(query.page) || 1;
-        const limit = Number(query.limit) || 10;
+        const limit = Math.min(Number(query.limit) || 6, 10);
 
         const [result, total] = await Promise.all([
 
@@ -61,7 +62,7 @@ export const ReviewsService = {
         }
 
         const page = Number(query.page) || 1;
-        const limit = Number(query.limit) || 10;
+        const limit = Math.min(Number(query.limit) || 6, 10);
 
         const [result, total] = await Promise.all([
 
@@ -101,7 +102,7 @@ export const ReviewsService = {
         const prismaQuery = qb.build();
 
         const page = Number(query.page) || 1;
-        const limit = Number(query.limit);
+        const limit = Math.min(Number(query.limit) || 6, 10);
 
         const conditionWhere = {
             ...prismaQuery.where,

@@ -161,7 +161,7 @@ export class QueryBuilder {
 
     paginate() {
         const page = parseInt(this.query.page as string) || 1;
-        const limit = parseInt(this.query.limit as string) || 10;
+        const limit = Math.min(parseInt(this.query.limit as string) || 6, 10);
         const skip = (page - 1) * limit;
         this.prismaQuery.skip = skip;
         this.prismaQuery.take = limit;
