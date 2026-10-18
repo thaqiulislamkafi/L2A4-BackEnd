@@ -8,6 +8,7 @@ import { QueryBuilder } from "../../utils/QueryBuilder";
 import { CartItemService } from "../cartItem/cartItem.service";
 import { DashboardStatsService } from "../dashboardStats/dashboardStats.service";
 import { OrderItemsService } from "../orderItems/orderItems.service";
+import { OrderMapper } from "./order.mapper";
 
 export const OrderService = {
 
@@ -35,7 +36,7 @@ export const OrderService = {
         ]);
 
         return {
-            data: result,
+            data: OrderMapper.toList(result),
             meta: {
                 page,
                 limit,
@@ -75,7 +76,7 @@ export const OrderService = {
         ])
 
         return {
-            data: result,
+            data: OrderMapper.toList(result),
             meta: {
                 page,
                 limit,
@@ -115,7 +116,7 @@ export const OrderService = {
         ])
 
         return {
-            data: result,
+            data: OrderMapper.toList(result),
             meta: {
                 page,
                 limit,
@@ -158,10 +159,10 @@ export const OrderService = {
             }
         });
 
-        return order;
+        return OrderMapper.toDetails(order);
     },
 
-    async addOrder(data:Order) {
+    async addOrder(data: Order) {
 
         return prisma.$transaction(async (tx) => {
 
@@ -185,7 +186,8 @@ export const OrderService = {
             const date = await getMonthAndDate(String(order.createdAt));
             await DashboardStatsService.incrementOrdersCreated(date.year, date.month, tx);
 
-            return { order, orderItems };
+            return OrderMapper.toCreateWithItemsResponse(order, orderItems);
+
         })
     },
 
@@ -193,7 +195,7 @@ export const OrderService = {
 
         return prisma.$transaction(async (tx) => {
 
-            const order = await this.getOrderById(orderId,tx);
+            const order = await this.getOrderById(orderId, tx);
 
             if (!order) {
                 throw new Error("Order not found");
@@ -207,16 +209,14 @@ export const OrderService = {
                 throw new Error("Processing orders cannot be cancelled");
             }
 
-            const cancelledOrder = await this.updateOrderStatus(order.id, 'CANCELLED',tx);
-            const cancelledOrderItems = await OrderItemsService.cancelOrderItems(cancelledOrder.id,tx) ;
+            const cancelledOrder = await this.updateOrderStatus(order.id, 'CANCELLED', tx);
+            const cancelledOrderItems = await OrderItemsService.cancelOrderItems(cancelledOrder.id, tx);
 
             const date = await getMonthAndDate(String(cancelledOrder.createdAt));
-            await DashboardStatsService.decrementOrdersCreated(date.year, date.month,tx);
+            await DashboardStatsService.decrementOrdersCreated(date.year, date.month, tx);
 
-            return {
-                cancelledOrder,
-                cancelledOrderItems
-            };
+            return OrderMapper.toCancelWithItemsResponse(cancelledOrder, cancelledOrderItems);
+
         })
     },
 
@@ -231,7 +231,7 @@ export const OrderService = {
             }
         });
 
-        return result;
+        return OrderMapper.toStatusResponse(result);
     },
 
     async deleteOrder(id: string) {
@@ -246,11 +246,13 @@ export const OrderService = {
             throw new Error('This order is not Cancelled,Only cancelled order can be deleted');
         }
 
-        return await prisma.order.delete({
+        const result = await prisma.order.delete({
             where: {
                 id,
-                status: 'CANCELLED'
+                status: "CANCELLED"
             }
-        })
+        });
+
+        return OrderMapper.toDeleteResponse(result);
     }
 }
