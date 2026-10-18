@@ -1,12 +1,14 @@
 import { Categories } from "../../../generated/prisma/client";
 import { prisma } from "../../../lib/prisma"
+import { CategoriesMapper } from "./categories.mapper";
 
 export const CategoriesService =  {
 
     async  getAllCategories() {
 
         const categories = await prisma.categories.findMany();
-        return categories;
+        return CategoriesMapper.toList(categories);
+
     },
 
     async getCategoryById(id:string){
@@ -14,7 +16,7 @@ export const CategoriesService =  {
         const category = await prisma.categories.findUnique({
             where: { id }
         })
-        return category ;
+        return CategoriesMapper.toResponse(category) ;
     },
     
     async addCategory(data:Categories){
@@ -22,7 +24,7 @@ export const CategoriesService =  {
         const category = await prisma.categories.create({
             data : data
         })
-        return category
+        return CategoriesMapper.toCreateResponse(category)
     },
 
     async updateCategory(id:string,data:Partial<Categories>){
@@ -31,7 +33,7 @@ export const CategoriesService =  {
             where: { id },
             data : data
         })
-        return category
+        return CategoriesMapper.toUpdateResponse(category)
     },
 
     async deleteCategory(id:string){
@@ -39,7 +41,7 @@ export const CategoriesService =  {
         const category = await prisma.categories.delete({
             where: { id }
         })
-        return category
+        return CategoriesMapper.toDeleteResponse(category)
     }
 
 }
