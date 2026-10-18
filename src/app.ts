@@ -19,6 +19,7 @@ import { OrderItemsRoute } from "./app/modules/orderItems/orderItems.route";
 import { AppSettingRouter } from "./app/modules/AppSetting/appSetting.route";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth";
+import { responseSizeLimit } from "./app/utils/responseSizeLimit";
 
 export const app = express() ;
 app.use(cors({
@@ -28,8 +29,9 @@ app.use(cors({
 
 app.all("/api/auth/*splat", toNodeHandler(auth));
 
-app.use(express.json()) ;
+app.use(express.json({limit:"100kb"})) ;
 
+app.use(responseSizeLimit);
 
 app.use('/api/cuisine-types',CuisineTypeRoute) ;
 app.use('/api/categories',CategoriesRoute) ;

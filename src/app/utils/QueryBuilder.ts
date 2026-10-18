@@ -26,17 +26,37 @@ export class QueryBuilder {
 
     search(fields: string[]) {
 
-        if (this.query.search) {
-            const searchTerm = this.query.search as string;
+        const rawSearch = this.query.search;
 
-            this.prismaQuery.where = {
-                OR: fields.map(field => ({
-                    [field]: {
-                        contains: searchTerm,
-                        mode: 'insensitive'
-                    }
-                }))
-            }
+        if (rawSearch === undefined || rawSearch === null) {
+            return this;
+        }
+
+        if (typeof rawSearch !== "string") {
+            throw new Error("Search must be a string");
+        }
+
+        const searchTerm = rawSearch.trim();
+
+        if (!searchTerm) {
+            return this;
+        }
+
+        const MAX_SEARCH_LENGTH = 100;
+
+        if (searchTerm.length > MAX_SEARCH_LENGTH) {
+            throw new Error(
+                `Search cannot exceed ${MAX_SEARCH_LENGTH} characters`
+            );
+        }
+
+        this.prismaQuery.where = {
+            OR: fields.map(field => ({
+                [field]: {
+                    contains: searchTerm,
+                    mode: 'insensitive'
+                }
+            }))
         }
 
         return this
@@ -160,8 +180,17 @@ export class QueryBuilder {
     }
 
     paginate() {
+
         const page = parseInt(this.query.page as string) || 1;
         const limit = Math.min(parseInt(this.query.limit as string) || 6, 10);
+
+        if (page < 0) {
+            throw new Error("Page number is must be positive")
+        }
+        else if (limit < 0) {
+            throw new Error("limit number is must be positive")
+        }
+
         const skip = (page - 1) * limit;
         this.prismaQuery.skip = skip;
         this.prismaQuery.take = limit;
