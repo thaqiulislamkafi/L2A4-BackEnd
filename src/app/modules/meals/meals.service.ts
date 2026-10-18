@@ -11,7 +11,7 @@ import { MealMapper } from "./meals.mapper";
 export const MealService = {
 
     async getMeals(query: Record<string, unknown>) {
-        
+
         const qb = new QueryBuilder(query)
             .search(["name"])
             .advancedFilter([
@@ -89,7 +89,9 @@ export const MealService = {
         const [result, total] = await Promise.all([
 
             await prisma.meal.findMany({
-                ...prismaQuery,
+                orderBy: prismaQuery.orderBy,
+                skip: prismaQuery.skip,
+                take: prismaQuery.take,
                 where: conditionWhere,
                 include: {
                     cuisine_rel: true,
@@ -104,7 +106,7 @@ export const MealService = {
         ])
 
         return {
-            data: result,
+            data: MealMapper.toList(result),
             meta: {
                 page,
                 limit,
@@ -149,7 +151,9 @@ export const MealService = {
         const [result, total] = await Promise.all([
 
             await prisma.meal.findMany({
-                ...prismaQuery,
+                orderBy: prismaQuery.orderBy,
+                skip: prismaQuery.skip,
+                take: prismaQuery.take,
                 where: conditionWhere,
                 include: {
                     cuisine_rel: true,
@@ -164,7 +168,7 @@ export const MealService = {
         ])
 
         return {
-            data: result,
+            data: MealMapper.toList(result),
             meta: {
                 page,
                 limit,
@@ -205,7 +209,7 @@ export const MealService = {
             await DashboardStatsService.incrementMealsCreated(date.year, date.month, tx);
             await MealAnalyticsService.addMealAnalyticsData(meal.id, meal.provider_id, tx);
 
-            return meal;
+            return MealMapper.toCreateResponse(meal);
         })
     },
 
@@ -213,11 +217,12 @@ export const MealService = {
 
         const where = user.role === 'admin' ? { id } : { id, user_id: user.id };
 
-        return await prisma.meal.update({
+        const updatedMeal = await prisma.meal.update({
             where: where,
             data: data
         })
 
+        return MealMapper.toUpdateResponse(updatedMeal);
     },
 
     async deleteMeal(id: string, user: Partial<User>) {
@@ -238,6 +243,8 @@ export const MealService = {
 
             const date = await getMonthAndDate(String(result.createdAt));
             await DashboardStatsService.decrementMealsCreated(date.year, date.month, tx);
+
+            return MealMapper.toDeleteResponse(result);
         })
 
     },
@@ -291,7 +298,7 @@ export const MealService = {
                 }
             });
 
-            return result;
+            return MealMapper.toResponse(result);
         })
     },
 
@@ -306,7 +313,8 @@ export const MealService = {
             }
         });
 
-        return result;
+        return MealMapper.toResponse(result);
+
     },
 
     async getMealHeroContent(tx: TransactionClient = prisma) {
@@ -320,7 +328,7 @@ export const MealService = {
             }
         })
 
-        return result;
+        return MealMapper.toHeroContentResponse(result);
     },
 
     async manageMealSliderContent(mealId: string, isSliderContent: boolean) {
@@ -334,7 +342,7 @@ export const MealService = {
             }
         });
 
-        return result;
+        return MealMapper.toResponse(result);
     },
 
     async getMealSliderContents() {
@@ -359,6 +367,6 @@ export const MealService = {
             }
         });
 
-        return result;
+        return MealMapper.toResponse(result);
     }
 }
