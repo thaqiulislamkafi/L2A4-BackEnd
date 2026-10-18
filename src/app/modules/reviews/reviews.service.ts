@@ -5,9 +5,9 @@ import { getMonthAndDate } from "../../utils/getMonthAndDate"
 import { QueryBuilder } from "../../utils/QueryBuilder"
 import { DashboardStatsService } from "../dashboardStats/dashboardStats.service"
 import { MealAnalyticsService } from "../mealAnalytics/mealAnalytics.service"
+import { ReviewMapper } from "./reviews.mapper"
 
 export const ReviewsService = {
-
     async getReviews(query: Record<string, unknown>) {
 
         const qb = new QueryBuilder(query)
@@ -22,7 +22,10 @@ export const ReviewsService = {
         const [result, total] = await Promise.all([
 
             await prisma.review.findMany({
-                ...prismaQuery,
+                where: prismaQuery.where,
+                orderBy: prismaQuery.orderBy,
+                skip: prismaQuery.skip,
+                take: prismaQuery.take,
                 include: {
                     user: true,
                     meal: true
@@ -35,7 +38,7 @@ export const ReviewsService = {
         ])
 
         return {
-            data: result,
+            data: ReviewMapper.toList(result),
             meta: {
                 page,
                 limit,
@@ -63,7 +66,9 @@ export const ReviewsService = {
         const [result, total] = await Promise.all([
 
             await prisma.review.findMany({
-                ...prismaQuery,
+                orderBy: prismaQuery.orderBy,
+                skip: prismaQuery.skip,
+                take: prismaQuery.take,
                 where: conditionWhere,
                 include: {
                     meal: true,
@@ -77,7 +82,7 @@ export const ReviewsService = {
         ])
 
         return {
-            data: result,
+            data: ReviewMapper.toList(result),
             meta: {
                 page,
                 limit,
@@ -106,7 +111,9 @@ export const ReviewsService = {
         const [result, total] = await Promise.all([
 
             await prisma.review.findMany({
-                ...prismaQuery,
+                orderBy: prismaQuery.orderBy,
+                skip: prismaQuery.skip,
+                take: prismaQuery.take,
                 where: conditionWhere,
                 include: {
                     meal: true
@@ -119,7 +126,7 @@ export const ReviewsService = {
         ])
 
         return {
-            data: result,
+            data: ReviewMapper.toListForUser(result),
             meta: {
                 page,
                 limit,
@@ -141,7 +148,7 @@ export const ReviewsService = {
             }
         })
 
-        return review
+        return ReviewMapper.toListItem(review)
     },
 
     async addReview(data: Review) {
@@ -156,19 +163,20 @@ export const ReviewsService = {
             const date = await getMonthAndDate(String(newReview.createdAt));
             await DashboardStatsService.incrementReviewsCreated(date.year, date.month, tx);
 
-            return newReview;
+            return ReviewMapper.toCreateResponse(newReview);
         })
     },
 
     async updateReview(id: string, data: Partial<Review>, user: Partial<User>) {
 
         const where = user.role === 'admin' ? { id } : { id, user_id: user.id };
-        
-        return await prisma.review.update({
+
+        const result = await prisma.review.update({
             where: where,
             data: data
         })
 
+        return ReviewMapper.toUpdateResponse(result)
     },
 
     async deleteReview(id: string, user: Partial<User>) {
@@ -185,7 +193,7 @@ export const ReviewsService = {
             const date = await getMonthAndDate(String(result.createdAt));
             await DashboardStatsService.decrementReviewsCreated(date.year, date.month, tx);
 
-            return result;
+            return ReviewMapper.toResponse(result);
         })
 
 
