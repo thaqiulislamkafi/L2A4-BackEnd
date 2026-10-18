@@ -27,6 +27,7 @@ type OrderDetailsRecord = Prisma.OrderGetPayload<{
 
 type OrderScalar = Order;
 
+
 export const OrderMapper = {
     toListItem(order: OrderScalar) {
         return {
@@ -42,8 +43,41 @@ export const OrderMapper = {
         };
     },
 
+    toListItemForProvider(order: OrderScalar) {
+        return {
+            id: order.id,
+            user_id: order.user_id,
+            total_price: order.total_price,
+            status: order.status,
+            location: order.location,
+            contact: order.contact,
+            createdAt: order.createdAt,
+            updatedAt: order.updatedAt
+        };
+    },
+
+    toListItemForUser(order: OrderScalar) {
+        return {
+            id: order.id,
+            total_price: order.total_price,
+            status: order.status,
+            location: order.location,
+            contact: order.contact,
+            createdAt: order.createdAt,
+            updatedAt: order.updatedAt
+        };
+    },
+
     toList(orders: OrderScalar[]) {
         return orders.map((order) => OrderMapper.toListItem(order));
+    },
+
+    toListForProviders(orders: OrderScalar[]) {
+        return orders.map((order) => OrderMapper.toListItemForProvider(order));
+    },
+
+    toListForUsers(orders: OrderScalar[]) {
+        return orders.map((order) => OrderMapper.toListItemForUser(order));
     },
 
     toDetails(order: OrderDetailsRecord | null) {

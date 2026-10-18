@@ -26,10 +26,7 @@ export const OrderItemsController = {
         try {
 
             const mealId = String(req.params.mealId);
-            const result = await OrderItemsService.getOrderItemsByMealId(
-                mealId,
-                req.query
-            );
+            const result = await OrderItemsService.getOrderItemsByMealId( mealId, req.query);
 
             res.status(200).send({
                 success: true,
@@ -48,9 +45,7 @@ export const OrderItemsController = {
         try {
 
             const orderId = String(req.params.orderId);
-            const result = await OrderItemsService.getOrderItemByOrderId(
-                orderId
-            );
+            const result = await OrderItemsService.getOrderItemByOrderId(orderId,req.query);
 
             res.status(200).send({
                 success: true,

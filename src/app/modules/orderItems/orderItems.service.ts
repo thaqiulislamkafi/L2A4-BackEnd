@@ -4,6 +4,7 @@ import { TransactionClient } from "../../types/transactionClient.type";
 import { QueryBuilder } from "../../utils/QueryBuilder";
 import { MealAnalyticsService } from "../mealAnalytics/mealAnalytics.service";
 import { MealService } from "../meals/meals.service";
+import { OrderItemsMapper } from "./orderItems.mapper";
 
 export const OrderItemsService = {
 
@@ -22,15 +23,12 @@ export const OrderItemsService = {
         const [result, total] = await Promise.all([
 
             prisma.orderItem.findMany({
-                ...prismaQuery,
+                where: prismaQuery.where,
+                orderBy: prismaQuery.orderBy,
+                skip: prismaQuery.skip,
+                take: prismaQuery.take,
                 include: {
-                    meal: {
-                        select: {
-                            id: true,
-                            name: true,
-                            image: true
-                        }
-                    },
+                    meal: true
                 }
             }),
 
@@ -38,7 +36,7 @@ export const OrderItemsService = {
         ]);
 
         return {
-            data: result,
+            data: OrderItemsMapper.toList(result),
             meta: {
                 page,
                 limit,
@@ -69,16 +67,12 @@ export const OrderItemsService = {
         const [result, total] = await Promise.all([
 
             prisma.orderItem.findMany({
-                ...prismaQuery,
+                orderBy: prismaQuery.orderBy,
+                skip: prismaQuery.skip,
+                take: prismaQuery.take,
                 where: conditionWhere,
                 include: {
-                    meal: {
-                        select: {
-                            id: true,
-                            name: true,
-                            image: true
-                        }
-                    },
+                    meal: true
                 }
             }),
 
@@ -88,7 +82,7 @@ export const OrderItemsService = {
         ]);
 
         return {
-            data: result,
+            data: OrderItemsMapper.toList(result),
             meta: {
                 page,
                 limit,
@@ -98,13 +92,49 @@ export const OrderItemsService = {
         }
     },
 
-    async getOrderItemByOrderId(orderId: string) {
+    async getOrderItemByOrderId(orderId: string, query: Record<string, unknown>) {
 
-        return await prisma.orderItem.findMany({
-            where: {
-                order_id: orderId
+        const qb = new QueryBuilder(query)
+            .sort()
+            .paginate()
+            .search(['id', 'order_id'])
+
+        const prismaQuery = qb.build();
+
+        const conditionWhere = {
+            ...prismaQuery.where,
+            order_id: orderId
+        };
+
+        const page = Number(query.page) || 1;
+        const limit = Number(query.limit) || 10;
+
+        const [result, total] = await Promise.all([
+
+            prisma.orderItem.findMany({
+                orderBy: prismaQuery.orderBy,
+                skip: prismaQuery.skip,
+                take: prismaQuery.take,
+                where: conditionWhere,
+                include: {
+                    meal: true
+                }
+            }),
+
+            prisma.orderItem.count({
+                where: conditionWhere
+            })
+        ]);
+
+        return {
+            data: OrderItemsMapper.toList(result),
+            meta: {
+                page,
+                limit,
+                total,
+                totalPage: Math.ceil(total / limit)
             }
-        })
+        }
     },
 
     async getOrderItemsByProviderId(providerId: string, query: Record<string, unknown>) {
@@ -127,17 +157,12 @@ export const OrderItemsService = {
 
         const [result, total] = await Promise.all([
             prisma.orderItem.findMany({
-                ...prismaQuery,
+                orderBy: prismaQuery.orderBy,
+                skip: prismaQuery.skip,
+                take: prismaQuery.take,
                 where: conditionWhere,
                 include: {
-                    meal: {
-                        select: {
-                            id: true,
-                            name: true,
-                            image: true,
-                            pricePerPiece: true,
-                        },
-                    }
+                    meal: true
                 },
             }),
 
@@ -147,7 +172,7 @@ export const OrderItemsService = {
         ]);
 
         return {
-            data: result,
+            data: OrderItemsMapper.toProviderList(result),
             meta: {
                 page,
                 limit,
@@ -179,26 +204,13 @@ export const OrderItemsService = {
         const [result, total] = await Promise.all([
 
             prisma.orderItem.findMany({
-                ...prismaQuery,
+                orderBy: prismaQuery.orderBy,
+                skip: prismaQuery.skip,
+                take: prismaQuery.take,
                 where: conditionWhere,
                 include: {
-                    meal: {
-                        select: {
-                            id: true,
-                            name: true,
-                            image: true,
-                            pricePerPiece: true,
-                        },
-                    },
-                    order: {
-                        select: {
-                            id: true,
-                            user_id: true,
-                            total_price: true,
-                            status: true,
-                            createdAt: true,
-                        },
-                    },
+                    meal: true,
+                    order: true,
                 },
             }),
 
@@ -209,7 +221,7 @@ export const OrderItemsService = {
         ]);
 
         return {
-            data: result,
+            data: OrderItemsMapper.toUserList(result),
             meta: {
                 page,
                 limit,
