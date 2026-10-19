@@ -1,38 +1,49 @@
 import { prisma } from "../../../lib/prisma"
+import { DietryTypesMapper } from "./dietryType.mapper";
 
 export const DietryTypesService = {
 
     async getDietryTypes() {
+
         const dietryTypes = await prisma.dietrytype.findMany();
-        return dietryTypes;
+        return DietryTypesMapper.toList(dietryTypes);
+
     },
 
     async getDietryTypeById(id: string) {
+
         const dietryType = await prisma.dietrytype.findUnique({
             where: { id },
         });
-        return dietryType;
+        return DietryTypesMapper.toResponse(dietryType)
+
     },
 
     async addDietryType(name: { dietry_type_name: string }) {
+
         const newDietryType = await prisma.dietrytype.create({
             data: name
         });
-        return newDietryType;
+        return DietryTypesMapper.toCreateResponse(newDietryType);
+
     },
 
     async updateDietryType(id: string, name: string) {
+
         const updatedDietryType = await prisma.dietrytype.update({
             where: { id },
             data: name
         });
-        return updatedDietryType;
+        return DietryTypesMapper.toUpdateResponse(updatedDietryType);
+
     },
 
     async deleteDietryType(id: string) {
+
         const deletedDietryType = await prisma.dietrytype.delete({
             where: { id },
         });
-        return deletedDietryType;
+        return DietryTypesMapper.toDeleteResponse(deletedDietryType);
+
     },
 }
