@@ -1,5 +1,6 @@
 import express from "express" ;
 import cors from "cors"
+import http from "node:http";
 import { CuisineTypeRoute } from "./app/modules/cuisineTypes/cuisineType.route";
 import { CategoriesRoute } from "./app/modules/categories/categories.route";
 import { DietryTypeRoute } from "./app/modules/dietryTypes/dietryType.route";
@@ -20,6 +21,7 @@ import { AppSettingRouter } from "./app/modules/AppSetting/appSetting.route";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth";
 import { responseSizeLimit } from "./app/utils/responseSizeLimit";
+import { authRateLimiter, globalRateLimiter } from "./app/utils/rateLimiter";
 
 export const app = express() ;
 app.use(cors({
@@ -27,11 +29,19 @@ app.use(cors({
     credentials : true
 })) ;
 
-app.all("/api/auth/*splat", toNodeHandler(auth));
+const server = http.createServer(app)
+
 
 app.use(express.json({limit:"100kb"})) ;
 
+server.requestTimeout = 30000 ;
+server.headersTimeout = 10000 ;
+
 app.use(responseSizeLimit);
+app.use('/api',globalRateLimiter);
+app.use("/api/auth",authRateLimiter);
+
+app.all("/api/auth/*splat", toNodeHandler(auth));
 
 app.use('/api/cuisine-types',CuisineTypeRoute) ;
 app.use('/api/categories',CategoriesRoute) ;
@@ -50,7 +60,7 @@ app.use('/api/global-reviews',GlobalReviewsRoute) ;
 app.use('/api/faqs',FAQRoute) ;
 app.use('/api/dashboard',DashboardRoute) ;
 app.use('/api/dashboard-stats',DashboardStatsRoute) ;
-app.use('/api/auth-manage',AuthRoute) ;
+app.use('/api/auth-manage',authRateLimiter,AuthRoute) ;
 
 
 app.use('/api/app-settings',AppSettingRouter);
