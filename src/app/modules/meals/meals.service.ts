@@ -1,4 +1,3 @@
-import { Meal } from "../../../generated/prisma/client";
 import { prisma } from "../../../lib/prisma"
 import { User } from "../../../prisma/client";
 import { TransactionClient } from "../../types/transactionClient.type";
@@ -6,6 +5,7 @@ import { getMonthAndDate } from "../../utils/getMonthAndDate";
 import { QueryBuilder } from "../../utils/QueryBuilder";
 import { DashboardStatsService } from "../dashboardStats/dashboardStats.service";
 import { MealAnalyticsService } from "../mealAnalytics/mealAnalytics.service";
+import { CreateMealDto, UpdateMealDto } from "./meals.dto";
 import { MealMapper } from "./meals.mapper";
 
 export const MealService = {
@@ -197,7 +197,7 @@ export const MealService = {
         return meal
     },
 
-    async addMeal(data: Meal) {
+    async addMeal(data: CreateMealDto) {
 
         return await prisma.$transaction(async (tx) => {
 
@@ -213,7 +213,7 @@ export const MealService = {
         })
     },
 
-    async updateMeal(id: string, data: Partial<Meal>, user: Partial<User>) {
+    async updateMeal(id: string, data: UpdateMealDto, user: Partial<User>) {
 
         const where = user.role === 'admin' ? { id } : { id, user_id: user.id };
 
