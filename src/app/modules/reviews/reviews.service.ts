@@ -1,10 +1,10 @@
-import { Review } from "../../../generated/prisma/client"
 import { prisma } from "../../../lib/prisma"
 import { User } from "../../../prisma/client"
 import { getMonthAndDate } from "../../utils/getMonthAndDate"
 import { QueryBuilder } from "../../utils/QueryBuilder"
 import { DashboardStatsService } from "../dashboardStats/dashboardStats.service"
 import { MealAnalyticsService } from "../mealAnalytics/mealAnalytics.service"
+import { CreateReviewDto, UpdateReviewDto } from "./reviews.dto"
 import { ReviewMapper } from "./reviews.mapper"
 
 export const ReviewsService = {
@@ -152,7 +152,7 @@ export const ReviewsService = {
         return ReviewMapper.toListItem(review)
     },
 
-    async addReview(data: Review) {
+    async addReview(data: CreateReviewDto) {
 
         return await prisma.$transaction(async (tx) => {
 
@@ -168,7 +168,7 @@ export const ReviewsService = {
         })
     },
 
-    async updateReview(id: string, data: Partial<Review>, user: Partial<User>) {
+    async updateReview(id: string, data: UpdateReviewDto, user: Partial<User>) {
 
         const where = user.role === 'admin' ? { id } : { id, user_id: user.id };
 
