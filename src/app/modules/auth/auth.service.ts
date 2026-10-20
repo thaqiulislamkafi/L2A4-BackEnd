@@ -10,6 +10,7 @@ import { getMonthAndDate } from "../../utils/getMonthAndDate";
 import { CartService } from "../cart/cart.service";
 import { User } from "../../../generated/prisma/client";
 import { env } from "../../../config/env.config";
+import { ChangePasswordDto, ResetPasswordDto, SigninDto, SignupDto } from "./auth.dto";
 
 export const AuthService = {
 
@@ -97,7 +98,7 @@ export const AuthService = {
     },
 
     async SignUp(data: any, req: AuthRequest) {
-
+        
         const result = await auth.api.signUpEmail({
             body: data,
             headers: fromNodeHeaders(req.headers),
@@ -113,7 +114,7 @@ export const AuthService = {
         return result;
     },
 
-    async SignIn(data: any, req: AuthRequest) {
+    async SignIn(data: SigninDto, req: AuthRequest) {
 
         const result = await auth.api.signInEmail({
             body: data,
@@ -145,7 +146,7 @@ export const AuthService = {
         return session
     },
 
-    async changePassword(data: { password: string; newPassword: string }, req: AuthRequest) {
+    async changePassword(data: ChangePasswordDto, req: AuthRequest) {
 
         const result = await auth.api.changePassword({
             body: {
@@ -166,7 +167,7 @@ export const AuthService = {
         return result;
     },
 
-    async ResetPassword(data: any) {
+    async ResetPassword(data: ResetPasswordDto) {
 
         const result = await auth.api.resetPassword({
             body: data
