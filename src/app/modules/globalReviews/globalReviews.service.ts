@@ -5,6 +5,7 @@ import { User } from "../../../prisma/client";
 import { getMonthAndDate } from "../../utils/getMonthAndDate";
 import { QueryBuilder } from "../../utils/QueryBuilder";
 import { DashboardStatsService } from "../dashboardStats/dashboardStats.service";
+import { CreateGlobalReviewDto, UpdateGlobalReviewDto } from "./globalReviews.dto";
 
 export const GlobalReviewsService = {
 
@@ -102,7 +103,7 @@ export const GlobalReviewsService = {
         return review;
     },
 
-    async addGlobalReview(data: GlobalReview) {
+    async addGlobalReview(data: CreateGlobalReviewDto) {
 
         return await prisma.$transaction(async (tx) => {
 
@@ -117,7 +118,7 @@ export const GlobalReviewsService = {
         })
     },
 
-    async updateGlobalReview(id: string, data: Partial<GlobalReview>, user: Partial<User>) {
+    async updateGlobalReview(id: string, data: UpdateGlobalReviewDto, user: Partial<User>) {
 
         const where = user.role === 'admin' ? { id } : { id, user_id: user.id };
 
