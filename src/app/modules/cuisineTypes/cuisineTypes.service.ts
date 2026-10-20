@@ -1,4 +1,5 @@
 import { prisma } from "../../../lib/prisma"
+import { CreateCuisineTypeDto, UpdateCuisineTypeDto } from "./cuisineType.Dto";
 import { CuisineTypeMapper } from "./cuisinetype.mapper";
 
 export const CuisineTypeService = {
@@ -19,20 +20,20 @@ export const CuisineTypeService = {
 
     },
 
-    async addCuisineType(name: { cuisine_type_name: string }) {
+    async addCuisineType(data: CreateCuisineTypeDto) {
 
         const newCuisineType = await prisma.cuisinetype.create({
-            data: name
+            data: data
         })
         return CuisineTypeMapper.toCreateResponse(newCuisineType)
 
     },
 
-    async updateCuisineType(id: string, name: string) {
+    async updateCuisineType(id: string, data: UpdateCuisineTypeDto) {
 
         const updatedCuisineType = await prisma.cuisinetype.update({
             where: { id },
-            data : name
+            data : data
         })
         return CuisineTypeMapper.toUpdateResponse(updatedCuisineType)
 
