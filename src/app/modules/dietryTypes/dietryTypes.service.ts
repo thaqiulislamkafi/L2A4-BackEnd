@@ -1,4 +1,5 @@
 import { prisma } from "../../../lib/prisma"
+import { CreateDietryTypeDto, UpdateDietryTypeDto } from "./dietryType.dto";
 import { DietryTypesMapper } from "./dietryType.mapper";
 
 export const DietryTypesService = {
@@ -19,20 +20,20 @@ export const DietryTypesService = {
 
     },
 
-    async addDietryType(name: { dietry_type_name: string }) {
+    async addDietryType(data: CreateDietryTypeDto) {
 
         const newDietryType = await prisma.dietrytype.create({
-            data: name
+            data: data
         });
         return DietryTypesMapper.toCreateResponse(newDietryType);
 
     },
 
-    async updateDietryType(id: string, name: string) {
+    async updateDietryType(id: string, data:UpdateDietryTypeDto) {
 
         const updatedDietryType = await prisma.dietrytype.update({
             where: { id },
-            data: name
+            data: data
         });
         return DietryTypesMapper.toUpdateResponse(updatedDietryType);
 
