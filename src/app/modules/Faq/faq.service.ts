@@ -1,6 +1,6 @@
-import { FAQ } from "../../../generated/prisma/client";
 import { prisma } from "../../../lib/prisma";
 import { QueryBuilder } from "../../utils/QueryBuilder";
+import { CreateFaqDto, UpdateFaqDto } from "./faq.dto";
 import { FAQMapper } from "./faq.mapper";
 
 export const FAQService = {
@@ -93,7 +93,7 @@ export const FAQService = {
 
   },
 
-  async createFAQ(data: FAQ) {
+  async createFAQ(data: CreateFaqDto) {
 
     const result = await prisma.fAQ.create({
       data,
@@ -102,7 +102,7 @@ export const FAQService = {
 
   },
 
-  async updateFAQ(id: string, data: Partial<FAQ>) {
+  async updateFAQ(id: string, data: UpdateFaqDto) {
 
     const result = await prisma.fAQ.update({
       where: { id },
