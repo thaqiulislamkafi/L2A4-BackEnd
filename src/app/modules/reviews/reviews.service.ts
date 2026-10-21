@@ -170,6 +170,9 @@ export const ReviewsService = {
 
     async updateReview(id: string, data: UpdateReviewDto, user: Partial<User>) {
 
+        const existReview = await this.getReviewById(id);
+        if (!existReview) throw new Error("Review Not found");
+
         const where = user.role === 'admin' ? { id } : { id, user_id: user.id };
 
         const result = await prisma.review.update({
@@ -181,6 +184,9 @@ export const ReviewsService = {
     },
 
     async deleteReview(id: string, user: Partial<User>) {
+
+        const existReview = await this.getReviewById(id);
+        if (!existReview) throw new Error("Review Not found");
 
         const where = user.role === 'admin' ? { id } : { id, user_id: user.id };
 

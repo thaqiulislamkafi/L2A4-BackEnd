@@ -199,6 +199,14 @@ export const MealService = {
 
     async addMeal(data: CreateMealDto) {
 
+        const ExistMeal = await prisma.meal.findFirst({
+            where: {
+                name: data.name
+            }
+        })
+
+        if (ExistMeal) throw new Error("Meal is already exist")
+
         return await prisma.$transaction(async (tx) => {
 
             const meal = await tx.meal.create({
@@ -215,6 +223,9 @@ export const MealService = {
 
     async updateMeal(id: string, data: UpdateMealDto, user: Partial<User>) {
 
+        const existMeal = await this.findMealById(id);
+        if (!existMeal) throw new Error("Meal no found");
+
         const where = user.role === 'admin' ? { id } : { id, user_id: user.id };
 
         const updatedMeal = await prisma.meal.update({
@@ -226,6 +237,9 @@ export const MealService = {
     },
 
     async deleteMeal(id: string, user: Partial<User>) {
+
+        const existMeal = await this.findMealById(id);
+        if (!existMeal) throw new Error("Meal no found");
 
         const where = user.role === 'admin' ? { id } : { id, provider_id: user.id };
 
@@ -284,6 +298,12 @@ export const MealService = {
 
     async markMealHeroContent(mealId: string) {
 
+        const existMeal = await this.findMealById(mealId);
+        if (!existMeal) throw new Error("Meal is not found");
+
+        if (existMeal?.isHeroContent)
+            throw new Error("Meal Content already marked as hero content");
+
         return await prisma.$transaction(async (tx) => {
 
             const isExist = await this.getMealHeroContent(tx);
@@ -303,6 +323,12 @@ export const MealService = {
     },
 
     async unMarkMealHeroContent(mealId: string, tx: TransactionClient = prisma) {
+
+        const existMeal = await this.findMealById(mealId);
+        if (!existMeal) throw new Error("Meal is not found");
+
+        if (!existMeal?.isHeroContent)
+            throw new Error("Meal Content already unmarked as hero content");
 
         const result = await tx.meal.update({
             where: {
@@ -328,10 +354,15 @@ export const MealService = {
             }
         })
 
+        if (!result) throw new Error("Meal hero content not found")
+
         return MealMapper.toHeroContentResponse(result);
     },
 
     async manageMealSliderContent(mealId: string, isSliderContent: boolean) {
+
+        const existMeal = await this.findMealById(mealId);
+        if (!existMeal) throw new Error("Meal is not found");
 
         const result = await prisma.meal.update({
             where: {
@@ -357,6 +388,9 @@ export const MealService = {
     },
 
     async manageMealPublish(mealId: string, isPublished: boolean) {
+
+        const existMeal = await this.findMealById(mealId);
+        if (!existMeal) throw new Error("Meal is not found");
 
         const result = await prisma.meal.update({
             where: {
