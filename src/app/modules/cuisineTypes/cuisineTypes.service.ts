@@ -16,11 +16,24 @@ export const CuisineTypeService = {
         const cuisineType = await prisma.cuisinetype.findUnique({
             where: { id },
         })
+
+        if(!cuisineType)
+            throw new Error("This Cuisine Type is not found");
+
         return CuisineTypeMapper.toResponse(cuisineType)
 
     },
 
     async addCuisineType(data: CreateCuisineTypeDto) {
+
+        const isCuisineTypeExist = await prisma.cuisinetype.findFirst({
+            where : {
+                cuisine_type_name : data.cuisine_type_name
+            }
+        })
+
+        if(isCuisineTypeExist)
+            throw new Error(`${data.cuisine_type_name} is already added`);
 
         const newCuisineType = await prisma.cuisinetype.create({
             data: data
@@ -31,18 +44,28 @@ export const CuisineTypeService = {
 
     async updateCuisineType(id: string, data: UpdateCuisineTypeDto) {
 
+        const isCuisineTypeExist = await this.getCuisineTypeById(id);
+
         const updatedCuisineType = await prisma.cuisinetype.update({
-            where: { id },
+            where: { 
+                id : isCuisineTypeExist?.id
+            },
             data : data
         })
-        return CuisineTypeMapper.toUpdateResponse(updatedCuisineType)
+
+        return CuisineTypeMapper.toUpdateResponse(updatedCuisineType);
 
     },
 
     async deleteCuisineType(id: string) {
 
+        const isCuisineTypeExist = await this.getCuisineTypeById(id);
+
+
         const deletedCuisineType = await prisma.cuisinetype.delete({
-            where: { id },
+            where: { 
+                id : isCuisineTypeExist?.id
+            },
         })
         return CuisineTypeMapper.toDeleteResponse(deletedCuisineType)
 
