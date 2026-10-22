@@ -3,6 +3,7 @@ import { User } from "../../../prisma/client";
 import { TransactionClient } from "../../types/transactionClient.type";
 import { getMonthAndDate } from "../../utils/getMonthAndDate";
 import { QueryBuilder } from "../../utils/QueryBuilder";
+import { AuthService } from "../auth/auth.service";
 import { DashboardStatsService } from "../dashboardStats/dashboardStats.service";
 import { MealAnalyticsService } from "../mealAnalytics/mealAnalytics.service";
 import { CreateMealDto, UpdateMealDto } from "./meals.dto";
@@ -118,6 +119,9 @@ export const MealService = {
     },
 
     async getMealsByProvider(provider_id: string, query: Record<string, unknown>) {
+
+        const existProvider = await AuthService.getUserById(provider_id);
+        if(!existProvider) throw new Error("Provider not found") ;
 
         const qb = new QueryBuilder(query)
             .search(['name'])
