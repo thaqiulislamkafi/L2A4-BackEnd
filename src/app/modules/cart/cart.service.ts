@@ -4,21 +4,24 @@ import { TransactionClient } from "../../types/transactionClient.type"
 
 export const CartService = {
 
-    async getAllCarts(){
+    async getAllCarts() {
 
-        const carts = await prisma.cart.findMany() ;
-        return carts ;
-        
+        const carts = await prisma.cart.findMany();
+        return carts;
+
     },
 
     async getCartById(id: string, tx: TransactionClient = prisma) {
 
         const cart = await tx.cart.findUnique({
             where: { id },
-            include :{
-                cartItems : true
+            include: {
+                cartItems: true
             }
         })
+
+        if (!cart)
+            throw new Error("Cart is not found");
 
         return cart
     },
@@ -26,25 +29,28 @@ export const CartService = {
     async getCartByUserId(userId: string, tx: TransactionClient = prisma) {
 
         const cart = await tx.cart.findUnique({
-            where: { 
-                user_id : userId
+            where: {
+                user_id: userId
             },
-            
+
         })
 
-        if(!cart?.id){
-           return await this.addCart(userId)
+        if (!cart?.id) {
+            return await this.addCart(userId)
         }
+
+        if (!cart)
+            throw new Error("Cart is not found");
 
         return cart
     },
 
-    async addCart(userId: string, tx : TransactionClient = prisma) {
+    async addCart(userId: string, tx: TransactionClient = prisma) {
 
         const existCart = await tx.cart.findUnique({
-           where : {
-            user_id : userId
-           }
+            where: {
+                user_id: userId
+            }
         });
 
         if (existCart) {
@@ -54,7 +60,8 @@ export const CartService = {
         const cart = await tx.cart.create({
             data: {
                 user_id: userId
-        }})
+            }
+        })
         return cart;
     },
 

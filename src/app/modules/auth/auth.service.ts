@@ -94,6 +94,10 @@ export const AuthService = {
         const result = await prisma.user.findUnique({
             where: { id }
         });
+
+        if(!result)
+            throw new Error("User is not found");
+
         return result;
     },
 

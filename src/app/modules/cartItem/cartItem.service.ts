@@ -1,26 +1,32 @@
 import { CartItem } from "../../../generated/prisma/client";
 import { prisma } from "../../../lib/prisma";
 import { TransactionClient } from "../../types/transactionClient.type";
+import { AuthService } from "../auth/auth.service";
 import { CartService } from "../cart/cart.service";
 
 export const CartItemService = {
 
     async getCartItemById(id: string) {
 
-        const cartItems = await prisma.cartItem.findUnique({
+        const cartItem = await prisma.cartItem.findUnique({
             where: {
                 id
             }
         });
 
-        return cartItems
+        if(!cartItem)
+            throw new Error("This Cart Item is not found") ;
+
+        return cartItem
     },
 
     async getCartItemByCartId(cartId: string) {
 
+        const isCartExist = await CartService.getCartById(cartId) ;
+
         const cartItems = await prisma.cartItem.findMany({
             where: {
-                cart_id: cartId
+                cart_id: isCartExist.id
             },
             include: {
                 meal: {
@@ -40,9 +46,11 @@ export const CartItemService = {
 
     async getCartItemByUserId(userId: string, tx: TransactionClient = prisma) {
 
+        const isExistUser = await AuthService.getUserById(userId)
+
         const cartItems = await tx.cartItem.findMany({
             where: {
-                user_id: userId
+                user_id: isExistUser.id
             },
             include: {
                 meal: {
@@ -61,6 +69,7 @@ export const CartItemService = {
     },
 
     async addCartItem(data: CartItem) {
+
         const cart = await CartService.getCartByUserId(data.user_id);
 
         if (!cart) {
@@ -73,6 +82,7 @@ export const CartItemService = {
             },
             select: {
                 id: true,
+                name : true,
                 provider_id: true,
                 pricePerPiece: true,
                 availablePieces: true
@@ -86,6 +96,16 @@ export const CartItemService = {
         if (meal.availablePieces < data.quantity) {
             throw new Error("Requested quantity is not available");
         }
+
+        const isExistcartItem = await prisma.cartItem.findFirst({
+            where : {
+                cart_id : cart.id,
+                meal_id : data.meal_id
+            }
+        });
+
+        if(isExistcartItem)
+            throw new Error(`${meal.name} is already added`)
 
         const existingCartItem = await prisma.cartItem.findFirst({
             where: {
@@ -107,7 +127,7 @@ export const CartItemService = {
         data.cart_id = cart.id;
         data.price = meal.pricePerPiece;
 
-        const cartItem = await prisma.cartItem.create({
+        const cartItem =  await prisma.cartItem.create({
             data
         });
 
@@ -116,9 +136,14 @@ export const CartItemService = {
 
     async deleteCartItem(id: string) {
 
+        const isExistcartItem = await this.getCartItemById(id) ;
+
         const cartItem = await prisma.cartItem.delete({
-            where: { id }
+            where: { 
+                id : isExistcartItem.id
+            }
         })
+        
         return cartItem;
     },
 
