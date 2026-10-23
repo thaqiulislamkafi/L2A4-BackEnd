@@ -1,7 +1,6 @@
 import { CartItem } from "../../../generated/prisma/client";
 import { prisma } from "../../../lib/prisma";
 import { TransactionClient } from "../../types/transactionClient.type";
-import { AuthService } from "../auth/auth.service";
 import { CartService } from "../cart/cart.service";
 
 export const CartItemService = {
@@ -22,11 +21,9 @@ export const CartItemService = {
 
     async getCartItemByCartId(cartId: string) {
 
-        const isCartExist = await CartService.getCartById(cartId) ;
-
         const cartItems = await prisma.cartItem.findMany({
             where: {
-                cart_id: isCartExist.id
+                cart_id: cartId
             },
             include: {
                 meal: {
@@ -46,11 +43,9 @@ export const CartItemService = {
 
     async getCartItemByUserId(userId: string, tx: TransactionClient = prisma) {
 
-        const isExistUser = await AuthService.getUserById(userId)
-
         const cartItems = await tx.cartItem.findMany({
             where: {
-                user_id: isExistUser.id
+                user_id: userId
             },
             include: {
                 meal: {
@@ -136,11 +131,9 @@ export const CartItemService = {
 
     async deleteCartItem(id: string) {
 
-        const isExistcartItem = await this.getCartItemById(id) ;
-
         const cartItem = await prisma.cartItem.delete({
             where: { 
-                id : isExistcartItem.id
+                id : id
             }
         })
         
