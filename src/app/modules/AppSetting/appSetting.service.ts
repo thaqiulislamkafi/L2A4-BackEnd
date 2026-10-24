@@ -1,41 +1,45 @@
 import { SettingType } from "../../../generated/prisma/client";
 import { prisma } from "../../../lib/prisma";
 import { CreateAppSettingDto, UpdateAppSettingDto } from "./appSetting.dto";
+import { AppSettingMapper } from "./appSetting.mapper";
 
 export const AppSettingService = {
 
     async getAllSettings() {
-        return await prisma.appSetting.findMany()
+
+        const result = await prisma.appSetting.findMany()
+        return AppSettingMapper.toList(result);
+
     },
 
     async getSettingById(id: string) {
 
-        return await prisma.appSetting.findUnique({
+        const result = await prisma.appSetting.findUnique({
             where: {
                 id
             }
         });
-
+        return AppSettingMapper.toResponse(result);
     },
 
     async getSettingByKey(key: string) {
 
-        return await prisma.appSetting.findMany({
+        const result = await prisma.appSetting.findMany({
             where: {
-                key : {
-                    startsWith : `${key}`
+                key: {
+                    startsWith: `${key}`
                 }
             },
-            orderBy : {
-                key : "asc"
+            orderBy: {
+                key: "asc"
             }
         });
-
+        return AppSettingMapper.toList(result)
     },
 
     async getSettingsByType(type: SettingType) {
 
-        return await prisma.appSetting.findMany({
+        const result = await prisma.appSetting.findMany({
             where: {
                 type
             },
@@ -43,36 +47,37 @@ export const AppSettingService = {
                 createdAt: "asc"
             }
         });
+        return AppSettingMapper.toList(result)
 
     },
 
     async addSetting(data: CreateAppSettingDto) {
 
-        return await prisma.appSetting.create({
+        const result = await prisma.appSetting.create({
             data
         });
-
+        return AppSettingMapper.toCreateResponse(result);
     },
 
     async updateSetting(id: string, data: UpdateAppSettingDto) {
 
-        return await prisma.appSetting.update({
+        const result = await prisma.appSetting.update({
             where: {
                 id
             },
             data
         });
-
+        return AppSettingMapper.toUpdateResponse(result);
     },
 
     async deleteSetting(id: string) {
 
-        return await prisma.appSetting.delete({
+        const result = await prisma.appSetting.delete({
             where: {
                 id
             }
         });
-
+        return AppSettingMapper.toDeleteResponse(result);
     },
 
 
