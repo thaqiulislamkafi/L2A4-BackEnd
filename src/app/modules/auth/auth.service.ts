@@ -11,6 +11,7 @@ import { CartService } from "../cart/cart.service";
 import { User } from "../../../generated/prisma/client";
 import { env } from "../../../config/env.config";
 import { ChangePasswordDto, ResetPasswordDto, SigninDto, SignupDto } from "./auth.dto";
+import { AuthMapper } from "./auth.mapper";
 
 export const AuthService = {
 
@@ -38,7 +39,7 @@ export const AuthService = {
         ]);
 
         return {
-            data: result,
+            data: AuthMapper.toList(result),
             meta: {
                 page,
                 limit,
@@ -79,7 +80,7 @@ export const AuthService = {
             })
         ]);
         return {
-            data: result,
+            data: AuthMapper.toList(result),
             meta: {
                 page,
                 limit,
@@ -98,7 +99,7 @@ export const AuthService = {
         if(!result)
             throw new Error("User is not found");
 
-        return result;
+        return AuthMapper.toResponse(result);
     },
 
     async SignUp(data: any, req: AuthRequest) {
