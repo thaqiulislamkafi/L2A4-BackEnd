@@ -1,5 +1,6 @@
-import { AppSetting, SettingType } from "../../../generated/prisma/client";
+import { SettingType } from "../../../generated/prisma/client";
 import { prisma } from "../../../lib/prisma";
+import { CreateAppSettingDto, UpdateAppSettingDto } from "./appSetting.dto";
 
 export const AppSettingService = {
 
@@ -45,7 +46,7 @@ export const AppSettingService = {
 
     },
 
-    async addSetting(data: AppSetting) {
+    async addSetting(data: CreateAppSettingDto) {
 
         return await prisma.appSetting.create({
             data
@@ -53,7 +54,7 @@ export const AppSettingService = {
 
     },
 
-    async updateSetting(id: string, data: Partial<AppSetting>) {
+    async updateSetting(id: string, data: UpdateAppSettingDto) {
 
         return await prisma.appSetting.update({
             where: {
