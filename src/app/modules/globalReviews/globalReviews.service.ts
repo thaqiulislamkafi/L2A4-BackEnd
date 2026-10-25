@@ -6,6 +6,7 @@ import { getMonthAndDate } from "../../utils/getMonthAndDate";
 import { QueryBuilder } from "../../utils/QueryBuilder";
 import { DashboardStatsService } from "../dashboardStats/dashboardStats.service";
 import { CreateGlobalReviewDto, UpdateGlobalReviewDto } from "./globalReviews.dto";
+import { GlobalReviewsMapper } from "./globalReviews.mapper";
 
 export const GlobalReviewsService = {
 
@@ -36,7 +37,7 @@ export const GlobalReviewsService = {
         ]);
 
         return {
-            data: result,
+            data: GlobalReviewsMapper.toList(result),
             meta: {
                 page,
                 limit,
@@ -66,7 +67,9 @@ export const GlobalReviewsService = {
         const [result, total] = await Promise.all([
 
             prisma.globalReview.findMany({
-                ...prismaQuery,
+                orderBy: prismaQuery.orderBy,
+                skip: prismaQuery.skip,
+                take: prismaQuery.take,
                 where: conditionWhere,
                 include: {
                     user: true
@@ -79,7 +82,7 @@ export const GlobalReviewsService = {
         ]);
 
         return {
-            data: result,
+            data: GlobalReviewsMapper.toListWithUser(result),
             meta: {
                 page,
                 limit,
@@ -100,7 +103,7 @@ export const GlobalReviewsService = {
             }
         });
 
-        return review;
+        return GlobalReviewsMapper.toResponseWithUser(review);
     },
 
     async addGlobalReview(data: CreateGlobalReviewDto) {
@@ -114,7 +117,7 @@ export const GlobalReviewsService = {
             const date = await getMonthAndDate(String(newReview.createdAt));
             await DashboardStatsService.incrementGlobalReviewsCreated(date.year, date.month, tx);
 
-            return newReview;
+            return GlobalReviewsMapper.toCreateResponse(newReview);
         })
     },
 
@@ -122,11 +125,11 @@ export const GlobalReviewsService = {
 
         const where = user.role === 'admin' ? { id } : { id, user_id: user.id };
 
-        return await prisma.globalReview.update({
+        const result = await prisma.globalReview.update({
             where: where,
             data
         });
-
+        return GlobalReviewsMapper.toUpdateResponse(result);
     },
 
     async deleteGlobalReview(id: string, user: Partial<User>) {
@@ -142,7 +145,7 @@ export const GlobalReviewsService = {
             const date = await getMonthAndDate(String(result.createdAt))
             await DashboardStatsService.decrementGlobalReviewsCreated(date.year, date.month, tx);
 
-            return result;
+            return GlobalReviewsMapper.toDeleteResponse(result);
         })
     }
 
