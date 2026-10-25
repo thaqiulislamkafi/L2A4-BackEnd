@@ -25,7 +25,10 @@ export const GlobalReviewsService = {
         const [result, total] = await Promise.all([
 
             prisma.globalReview.findMany({
-                ...prismaQuery,
+                orderBy: prismaQuery.orderBy,
+                skip: prismaQuery.skip,
+                take: prismaQuery.take,
+                where : prismaQuery.where,
                 include: {
                     user: true
                 }
@@ -37,7 +40,7 @@ export const GlobalReviewsService = {
         ]);
 
         return {
-            data: GlobalReviewsMapper.toList(result),
+            data: GlobalReviewsMapper.toListWithUser(result),
             meta: {
                 page,
                 limit,
