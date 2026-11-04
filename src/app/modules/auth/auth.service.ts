@@ -17,6 +17,7 @@ export const AuthService = {
 
         const qb = new QueryBuilder(query)
             .search(['email', 'name'])
+            .filter(['role'])
             .sort()
             .paginate()
 
@@ -108,6 +109,14 @@ export const AuthService = {
             await CartService.addCart(result.response.user.id);
         }
 
+        return result;
+    },
+
+    async createProvider(data: any) {
+
+        const result = await auth.api.createUser({
+            body: data,
+        });
         return result;
     },
 

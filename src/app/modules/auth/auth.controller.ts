@@ -67,6 +67,20 @@ export const AuthController = {
         }
     },
 
+    async createProvider(req: AuthRequest, res: Response, next: NextFunction) {
+
+        try {
+            const result = await AuthService.createProvider(req.body, req);
+            res.status(201).json({
+                success: true,
+                message: 'Provider created successfully',
+                data: result.user,
+            });
+        } catch (error) {
+            next(error)
+        }
+    },
+
     async SignIn(req: AuthRequest, res: Response, next: NextFunction) {
 
         try {

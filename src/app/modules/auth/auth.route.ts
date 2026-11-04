@@ -18,6 +18,7 @@ AuthRoute.post('/sign-out',AuthController.SignOut) ;
 AuthRoute.post('/get-me',AuthController.GetMe) ;
 
 AuthRoute.post('/change-password',validate(changePasswordSchema),AuthController.changePassword) ;
+AuthRoute.post('/create-provider',validate(signupSchema),AuthController.createProvider) ;
 AuthRoute.post('/request-reset',validate(changePasswordSchema),AuthController.RequestPasswordReset) ;
 AuthRoute.post('/reset-password',validate(changePasswordSchema),AuthController.ResetPassword) ;
 
