@@ -49,11 +49,11 @@ export const auth = betterAuth({
     },
     user: {
         additionalFields: {
-            // role: {
-            //     type: ["admin", "user", "provider"],
-            //     defaultValue: "user",
-            //     required: false,
-            // },
+            role: {
+                type: ["admin", "user", "provider"],
+                defaultValue: "user",
+                required: false,
+            },
             status: {
                 type: "string",
                 defaultValue: "active"

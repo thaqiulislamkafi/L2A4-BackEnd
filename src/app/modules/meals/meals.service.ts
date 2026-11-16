@@ -255,7 +255,7 @@ export const MealService = {
                 id: mealId
             },
             data: {
-                totalPieces: {
+                availablePieces: {
                     increment: quantity
                 }
             }
@@ -271,7 +271,7 @@ export const MealService = {
                 id: mealId
             },
             data: {
-                totalPieces: {
+                availablePieces: {
                     decrement: quantity
                 }
             }
