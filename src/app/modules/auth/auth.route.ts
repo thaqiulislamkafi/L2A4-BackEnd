@@ -1,7 +1,7 @@
 
 import { Router } from "express";
 import { AuthController } from "./auth.controller";
-import { changePasswordSchema, signinSchema, signupSchema, updateUserSchema } from "./auth.schema";
+import { changePasswordSchema, createProviderSchema, signinSchema, signupSchema, updateUserSchema } from "./auth.schema";
 import { validate } from "../../middlewares/validate";
 import { mealUpload } from "../../../config/multerCloudinary";
 
@@ -18,7 +18,7 @@ AuthRoute.post('/sign-out',AuthController.SignOut) ;
 AuthRoute.post('/get-me',AuthController.GetMe) ;
 
 AuthRoute.post('/change-password',validate(changePasswordSchema),AuthController.changePassword) ;
-AuthRoute.post('/create-provider',validate(signupSchema),AuthController.createProvider) ;
+AuthRoute.post('/create-provider',validate(createProviderSchema),AuthController.createProvider) ;
 AuthRoute.post('/request-reset',validate(changePasswordSchema),AuthController.RequestPasswordReset) ;
 AuthRoute.post('/reset-password',validate(changePasswordSchema),AuthController.ResetPassword) ;
 

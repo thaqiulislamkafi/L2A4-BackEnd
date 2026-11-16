@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Order } from "../../../generated/prisma/client";
 import { prisma } from "../../../lib/prisma"
 import { OrderStatus } from "../../../prisma/enums";
